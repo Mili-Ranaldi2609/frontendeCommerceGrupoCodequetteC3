@@ -1,0 +1,51 @@
+.footerContainer {
+    background-color: #3E2723;
+    color: white;
+    width: 90%;
+    padding: 2rem 4rem;
+  }
+  
+  .footerInfoContainer {
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-left: .5rem;
+  }
+  
+  .footerInfoContainer > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 150px;
+  }
+  
+  .footerInfoContainer h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.4rem;
+  }
+  
+  .footerInfoContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .footerInfoContainer > div {
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .footerIcons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    font-size: 2rem;
+    margin-top: 1rem;
+  }

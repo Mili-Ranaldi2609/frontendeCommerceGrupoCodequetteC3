@@ -1,0 +1,96 @@
+.homeMainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9fafb;
+    font-family: "Lato", sans-serif;
+    height: auto;
+  }
+  .homeImagePrincipal {
+    width: 100%;
+    height: auto;
+  }
+  .homeImagePrincipal img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 500px;
+    border-bottom: 4px solid #140c0a;
+  }
+  
+  .homeDiscountContainer {
+    margin: 1rem 0;
+    background-color: #140c0a;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .homeMainImageContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  
+  .homeImageContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    width: 95%;
+    max-width: 1200px;
+  }
+  
+  .homeImageContainer img {
+    width: calc(33.333% - 1rem);
+    aspect-ratio: 1/1; 
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px #140c0a;
+    transition: transform 0.3s ease;
+  }
+  
+  .homeImageContainer img:hover {
+    transform: scale(1.03);
+  }
+  
+  @media (max-width: 900px) {
+    .homeImageContainer img {
+      width: calc(50% - 1rem);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .homeImageContainer img {
+      width: 100%;
+    }
+  }
+  
+  
+  .homeAboutUsContainer {
+    background-color: #e5e7eb;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 1rem;
+    margin: 2rem;
+  }
+  
+  .homeAboutUsContainer h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #111827;
+  }
+  
+  .homeAboutUsContainer h4 {
+    font-size: 1.1rem;
+    color: #EFEBE9;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
