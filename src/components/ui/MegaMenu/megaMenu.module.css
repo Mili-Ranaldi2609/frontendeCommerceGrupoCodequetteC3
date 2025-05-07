@@ -1,0 +1,27 @@
+.menuContainer {
+    background-color: white;
+    padding: 10px 30px;
+  }
+  
+  .navLinks {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: grid;
+    grid-template-columns: repeat(3, 150px);
+    gap: 1rem;
+    z-index: 10;
+  }
+  

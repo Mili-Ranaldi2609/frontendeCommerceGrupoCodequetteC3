@@ -4,6 +4,7 @@ import { IoPersonSharp } from "react-icons/io5";
 import { FaCartShopping } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { MegaMenu } from "../../ui/MegaMenu/MegaMenu";
 
 export const NavBar = () => {
   const frases = [
@@ -12,6 +13,8 @@ export const NavBar = () => {
     "Retirá gratis por todas las sucursales del país",
     "Descuentos exclusivos para socios",
   ];
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [sexoSeleccionado, setSexoSeleccionado] = useState<string | null>(null);
 
   const [fraseActual, setFraseActual] = useState(0);
 
@@ -37,22 +40,42 @@ export const NavBar = () => {
       <div className={styles.navBarPrincipal}>
         ¡Retirá Gratis tu pedido por todas las sucursales! 🎉
       </div>
-
+  
       {/* Barra principal */}
       <div className={styles.navBarMainContainer}>
         <div className={styles.navBarLeftLinks}>
+          <img src={logo} alt="Urban Vibes Logo" />
           <p>Suscribite</p>
           <p>Ayuda</p>
         </div>
-
+  
         <div className={styles.navBarCenter}>
-          <p className={styles.active}>Destacados</p>
-          <p>Hombre</p>
-          <p>Mujer</p>
-          <p>Niño/a</p>
-          <p>Oportunidades</p>
+          <p
+            onMouseEnter={() => setSexoSeleccionado("MASCULINO")}
+            onMouseLeave={() => setSexoSeleccionado(null)}
+          >
+            Hombre
+          </p>
+          <p
+            onMouseEnter={() => setSexoSeleccionado("FEMENINO")}
+            onMouseLeave={() => setSexoSeleccionado(null)}
+          >
+            Mujer
+          </p>
+          <p
+            onMouseEnter={() => setSexoSeleccionado("UNISEX_CHILD")}
+            onMouseLeave={() => setSexoSeleccionado(null)}
+          >
+            Niño/a
+          </p>
+          <p
+            onMouseEnter={() => setSexoSeleccionado("UNISEX")}
+            onMouseLeave={() => setSexoSeleccionado(null)}
+          >
+            Unisex
+          </p>
         </div>
-
+  
         <div className={styles.navBarRight}>
           <div className={styles.searchBox}>
             <FaSearch />
@@ -62,7 +85,7 @@ export const NavBar = () => {
           <FaCartShopping />
         </div>
       </div>
-
+  
       {/* Barra inferior promocional */}
       <div className={styles.navBarPromo}>
         <span onClick={handlePrev}>&lt;</span>
@@ -72,6 +95,16 @@ export const NavBar = () => {
         </p>
         <span onClick={handleNext}>&gt;</span>
       </div>
+  
+      {/* MegaMenu: se muestra cuando hay una selección de sexo */}
+      {sexoSeleccionado && (
+        <div
+          onMouseEnter={() => {}}
+          onMouseLeave={() => setSexoSeleccionado(null)}
+        >
+          <MegaMenu sexo={sexoSeleccionado} />
+        </div>
+      )}
     </>
   );
-};
+}  
