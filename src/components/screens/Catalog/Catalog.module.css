@@ -1,0 +1,44 @@
+.catalogoContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.titulo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #3E2723;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+.loading {
+    text-align: center;
+    font-style: italic;
+    color: #4b5563;
+    /* gris */
+}
+
+.error {
+    text-align: center;
+    color: #dc2626;
+    /* rojo */
+    font-weight: bold;
+}
+
+.catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 80%;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; 
+}

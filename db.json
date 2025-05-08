@@ -1,0 +1,62 @@
+{
+    "productos": [
+      {
+        "id": 1,
+        "denominacion": "Zapatilla Running Pro",
+        "precioVenta": 45999.99,
+        "precioFinal": 41999.99,
+        "sexo": "MASCULINO",
+        "tienePromocion": true,
+        "categorias": ["Running", "Training"],
+        "imagenes": ["zapatillasejemplo1.jpeg"],
+        "detalle": {
+          "precioCompra": 20000,
+          "stockActual": 50,
+          "cantidad": 1,
+          "stockMaximo": 100,
+          "color": "NEGRO",
+          "talle": "TALLE_44"
+        }
+      },
+      {
+        "id": 2,
+        "denominacion": "Nike Air Max 90",
+        "precioVenta": 199999,
+        "precioFinal": 179999,
+        "sexo": "UNISEX",
+        "tienePromocion": true,
+        "categorias": ["Running", "Urbano"],
+        "imagenes": ["zapatillasejemplo2.jpeg"],
+        "detalle": {
+          "precioCompra": 150000,
+          "stockActual": 12,
+          "cantidad": 1,
+          "stockMaximo": 50,
+          "color": "Negro",
+          "talle": "42"
+        }
+      },
+      {
+        "id": 3,
+        "denominacion": "Adidas Ultraboost",
+        "precioVenta": 229999,
+        "precioFinal": 229999,
+        "sexo": "MASCULINO",
+        "tienePromocion": false,
+        "categorias": ["Deportivo"],
+        "imagenes": ["zapatillasejemplo3.jpeg"],
+        "detalle": {
+          "precioCompra": 180000,
+          "stockActual": 5,
+          "cantidad": 1,
+          "stockMaximo": 30,
+          "color": "Blanco",
+          "talle": "44"
+        }
+      }
+    ]
+  }
+  
+  
+  
+  

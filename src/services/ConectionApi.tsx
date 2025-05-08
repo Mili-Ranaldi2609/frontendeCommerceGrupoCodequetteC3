@@ -1,13 +1,17 @@
 import axios from "axios";
 
 // Configuración base
+
+export const api = axios.create({
+  baseURL: "http://localhost:3001" 
+});/*
 export const api = axios.create({
   baseURL: "http://localhost:8080", 
   auth: {
     username: "user",        
     password: "123456789" 
   },
-});
+});*/
 
 // =====================
 // CATEGORÍAS
@@ -21,7 +25,7 @@ export const deleteCategoria = (id: number) => api.delete(`/categorias/${id}`);
 // =====================
 // PRODUCTOS
 // =====================
-export const getProductos = () => api.get("/producto_detalle");
+export const getProductos = () => api.get("/productos");
 export const getProductoById = (id: number) => api.get(`/producto_detalle/${id}`);
 export const createProducto = (data: any) => api.post("/producto_detalle", data);
 export const updateProducto = (id: number, data: any) => api.put(`/producto_detalle/${id}`, data);

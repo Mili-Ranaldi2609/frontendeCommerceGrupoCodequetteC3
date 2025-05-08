@@ -1,13 +1,13 @@
 .footerContainer {
     background-color: #3E2723;
     color: white;
-    width: 90%;
+    width: 95%;
     padding: 2rem 4rem;
   }
   
   .footerInfoContainer {
     display: flex;
-    width: 95%;
+    width: 90%;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -48,4 +48,7 @@
     gap: 1rem;
     font-size: 2rem;
     margin-top: 1rem;
+  }
+  .footerIcons a{
+    color: white;
   }

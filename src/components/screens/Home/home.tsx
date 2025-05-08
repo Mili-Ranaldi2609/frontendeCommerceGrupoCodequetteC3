@@ -9,6 +9,7 @@ import zapatillasejemplo2 from "../../../assets/zapatillasejemplo2.jpeg";
 import zapatillasejemplo3 from "../../../assets/zapatillasejemplo3.jpeg";
 
 import imagePrincipal from "../../../assets/imagePrincipal.jpeg";
+import { useNavigate } from "react-router-dom";
 // Lista de ejemplo para productos que aparecerán en el carousel
 const exampleList = [
   {
@@ -34,42 +35,50 @@ const exampleList = [
 
 export const Home = () => {
   const { productos, loading, error } = useProducto();
+  const navigate = useNavigate();
+
+  const irAlCatalogo = () => {
+    navigate("/catalogo"); // Ruta que apunta al catálogo
+  };
   return (
-    <div className={style.homeMainContainer}>
+    <>
       <NavBar />
-      <div className={style.homeImagePrincipal}>
-        <img src={imagePrincipal} alt="Imagen principal tienda" />
-      </div>
-      <div className={style.homeDiscountContainer}>
-        <h3>Descuentos Especiales</h3>
-      </div>
+      <div className={style.homeMainContainer}>
+        <div className={style.homeImagePrincipal}>
+          <img src={imagePrincipal} alt="Imagen principal tienda" />
+        </div>
+        <div onClick={irAlCatalogo} className={style.homeDiscountContainer} style={{ cursor: "pointer" }}>
+          <h3>Descuentos Especiales</h3>
+        </div>
 
-      <div className={style.homeMainImageContainer}>
-        {loading && <div className={style.loading}>Cargando productos...</div>}
-        {error && <div className={style.error}>Error al cargar productos: {error}</div>}
-        {Array.isArray(productos) && productos.map((producto) => (
-          <div key={producto.id} className={style.homeImageContainer}>
-            <ProductoCard
-              producto={{
-                id: producto.id,
-                denominacion: producto.denominacion,
-                precioVenta: producto.precioFinal, // usá precioFinal si usás descuentos
-                imagenUrl: producto.imagenes?.[0] || "sin-imagen.jpg",
-                sexoProducto: producto.sexo, // 🔧 corregido
-                tienePromocion: producto.tienePromocion,
-                categorias: producto.categorias,
-                detalle: producto.detalle,
-              }}
-            />
-          </div>
-        ))}
+        <div className={style.homeMainImageContainer}>
+          {loading && <div className={style.loading}>Cargando productos...</div>}
+          {error && <div className={style.error}>Error al cargar productos: {error}</div>}
+          {Array.isArray(productos) && productos.map((producto) => (
+            <div key={producto.id} className={style.homeImageContainer}>
+              <ProductoCard
+                producto={{
+                  id: producto.id,
+                  denominacion: producto.denominacion,
+                  precioVenta: producto.precioVenta,
+                  precioFinal: producto.precioFinal,
+                  imagenes: [producto.imagenes?.[0]],
+                  sexo: producto.sexo,
+                  tienePromocion: producto.tienePromocion,
+                  categorias: producto.categorias,
+                  detalle: producto.detalle,
+                }}
+              />
+            </div>
+          ))}
 
+        </div>
+
+        <h2 style={{ paddingLeft: "1rem" }}>Descubrí lo nuevo</h2>
+        <Carousel toList={exampleList} />
       </div>
-
-      <h2 style={{ paddingLeft: "1rem" }}>Descubrí lo nuevo</h2>
-      <Carousel toList={exampleList} />
       <Footer />
-    </div>
+    </>
   );
 };
 

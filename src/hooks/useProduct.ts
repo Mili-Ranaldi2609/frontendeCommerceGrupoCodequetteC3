@@ -11,7 +11,7 @@ export const useProducto = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<Producto[]>("/productos"); // ✅ API base
+      const response = await api.get<Producto[]>("/productos");
       setProductos(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al cargar los productos");

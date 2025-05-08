@@ -25,11 +25,19 @@ export const Footer = () => {
           <p>Promociones</p>
         </div>
       </div>
+
       <div className={styles.footerIcons}>
-        <LuMessageCircle />
-        <FaFacebookSquare />
-        <IoLogoInstagram />
+        <a href="https://api.whatsapp.com/send?phone=5491127996935" target="_blank" rel="noopener noreferrer">
+          <LuMessageCircle />
+        </a>
+        <a href="https://www.facebook.com/nike/" target="_blank" rel="noopener noreferrer">
+          <FaFacebookSquare />
+        </a>
+        <a href="https://www.instagram.com/nike/" target="_blank" rel="noopener noreferrer">
+          <IoLogoInstagram />
+        </a>
       </div>
     </footer>
   );
 };
+

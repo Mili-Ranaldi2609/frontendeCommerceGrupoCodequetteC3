@@ -5,6 +5,8 @@ import { FaCartShopping } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { MegaMenu } from "../../ui/MegaMenu/MegaMenu";
+import { Link } from "react-router-dom";
+
 
 export const NavBar = () => {
   const frases = [
@@ -17,14 +19,20 @@ export const NavBar = () => {
   const [sexoSeleccionado, setSexoSeleccionado] = useState<string | null>(null);
 
   const [fraseActual, setFraseActual] = useState(0);
-
+  const [animacion, setAnimacion] = useState("entrada");
   useEffect(() => {
     const intervalo = setInterval(() => {
-      setFraseActual((prev) => (prev + 1) % frases.length);
-    }, 4000); // cambia cada 4 segundos
+      setAnimacion("salida"); // empieza animación de salida
+  
+      setTimeout(() => {
+        // cambia la frase cuando termina la salida
+        setFraseActual((prev) => (prev + 1) % frases.length);
+        setAnimacion("entrada"); // lanza entrada
+      }, 800); // duración de la salida
+    }, 5000);
+  
     return () => clearInterval(intervalo);
   }, []);
-
   // ✅ FUNCIONES PARA LAS FLECHAS
   const handleNext = () => {
     setFraseActual((prev) => (prev + 1) % frases.length);
@@ -44,34 +52,37 @@ export const NavBar = () => {
       {/* Barra principal */}
       <div className={styles.navBarMainContainer}>
         <div className={styles.navBarLeftLinks}>
-          <img src={logo} alt="Urban Vibes Logo" />
+        <Link to="/">
+        <img src={logo} alt="Urban Vibes Logo" className={styles.logo} />
+        </Link>
           <p>Suscribite</p>
           <p>Ayuda</p>
-        </div>
+          </div>
+
   
         <div className={styles.navBarCenter}>
           <p
             onMouseEnter={() => setSexoSeleccionado("MASCULINO")}
             onMouseLeave={() => setSexoSeleccionado(null)}
-          >
+            >
             Hombre
           </p>
           <p
             onMouseEnter={() => setSexoSeleccionado("FEMENINO")}
             onMouseLeave={() => setSexoSeleccionado(null)}
-          >
+            >
             Mujer
           </p>
           <p
             onMouseEnter={() => setSexoSeleccionado("UNISEX_CHILD")}
             onMouseLeave={() => setSexoSeleccionado(null)}
-          >
+            >
             Niño/a
           </p>
           <p
             onMouseEnter={() => setSexoSeleccionado("UNISEX")}
             onMouseLeave={() => setSexoSeleccionado(null)}
-          >
+            >
             Unisex
           </p>
         </div>
@@ -84,15 +95,26 @@ export const NavBar = () => {
           <IoPersonSharp />
           <FaCartShopping />
         </div>
-      </div>
-  
+        </div>
       {/* Barra inferior promocional */}
       <div className={styles.navBarPromo}>
         <span onClick={handlePrev}>&lt;</span>
-        <p>
-          {frases[fraseActual]}<br />
-          <strong>Ver Promociones</strong>
-        </p>
+        <div className={styles.content}>
+        <div
+    className={`${styles.promocionTexto} ${
+      animacion === "entrada"
+        ? styles.animarEntrada
+        : animacion === "salida"
+        ? styles.animarSalida
+        : ""
+    }`}
+  >
+    <p key={fraseActual}>{frases[fraseActual]}</p>
+  </div>
+
+            <div>
+              <strong>Ver Promociones</strong></div>
+        </div>
         <span onClick={handleNext}>&gt;</span>
       </div>
   
