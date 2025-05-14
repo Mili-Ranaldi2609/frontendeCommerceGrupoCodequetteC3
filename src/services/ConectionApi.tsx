@@ -1,17 +1,17 @@
 import axios from "axios";
 
 // Configuración base
-
+/*
 export const api = axios.create({
   baseURL: "http://localhost:3001" 
-});/*
+});*/
 export const api = axios.create({
   baseURL: "http://localhost:8080", 
   auth: {
-    username: "user",        
-    password: "123456789" 
+    username: "root",        
+    password: "pendorcho" 
   },
-});*/
+});
 
 // =====================
 // CATEGORÍAS

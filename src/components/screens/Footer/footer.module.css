@@ -1,10 +1,12 @@
 .footerContainer {
-    background-color: #3E2723;
-    color: white;
-    width: 95%;
-    padding: 2rem 4rem;
-  }
-  
+  background-color: #3E2723;
+  color: white;
+  width: 100%;
+  padding: 2rem 4rem;
+  box-sizing: border-box; 
+  margin-top: auto; 
+}
+
   .footerInfoContainer {
     display: flex;
     width: 90%;

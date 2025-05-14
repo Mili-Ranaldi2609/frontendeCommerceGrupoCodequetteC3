@@ -7,9 +7,25 @@ import { useProducto } from "../../../hooks/useProduct";
 import zapatillasejemplo1 from "../../../assets/zapatillasejemplo1.jpeg";
 import zapatillasejemplo2 from "../../../assets/zapatillasejemplo2.jpeg";
 import zapatillasejemplo3 from "../../../assets/zapatillasejemplo3.jpeg";
+import hombre from "../../../assets/hombre.png";
+import mujer from "../../../assets/mujer.png";
+import niño from "../../../assets/niños.png";
+import futbol from "../../../assets/futbol.png";
+import basquet from "../../../assets/basquet.png";
+import training from "../../../assets/trainig.png";
+import diario from "../../../assets/diario.png";
+import ropa from "../../../assets/ropa.png";
 
 import imagePrincipal from "../../../assets/imagePrincipal.jpeg";
 import { useNavigate } from "react-router-dom";
+
+const sportsCategories = [
+  { title: "Fútbol", image: futbol },
+  { title: "Diario", image: diario },
+  { title: "Básquet", image: basquet },
+  { title: "Training", image: training },
+  { title: "Ropa", image: ropa }
+];
 // Lista de ejemplo para productos que aparecerán en el carousel
 const exampleList = [
   {
@@ -71,11 +87,48 @@ export const Home = () => {
               />
             </div>
           ))}
+        </div>
+        <Carousel
+          toList={sportsCategories}
+          renderItem={(item) => (
+            <div className={style.carouselCard}>
+              <img src={item.image} alt={item.title} />
+              <p>{item.title}</p>
+            </div>
+          )}
+        />
+        <h2 style={{ paddingLeft: "1rem" }}>Descubrí lo nuevo</h2>
+        <Carousel
+          toList={exampleList}
+          renderItem={(product) => (
+            <div className={style.carouselCard}>
+              <img src={product.image} alt={product.title} />
+              <h3>{product.title}</h3>
+              <p>{product.description}</p>
+              <p>{product.price}</p>
+            </div>
+          )}
+        />
 
+      </div>
+      <div className={style.categoryCardsContainer}>
+        {/* Hombre */}
+        <div className={style.categoryCard} onClick={() => navigate("/catalogo/hombre")}>
+          <button className={style.categoryButton}>Para Hombre</button>
+          <img src={hombre} alt="Hombre" />
         </div>
 
-        <h2 style={{ paddingLeft: "1rem" }}>Descubrí lo nuevo</h2>
-        <Carousel toList={exampleList} />
+        {/* Mujer */}
+        <div className={style.categoryCard} onClick={() => navigate("/catalogo/mujer")}>
+          <button className={style.categoryButton}>Para Mujer</button>
+          <img src={mujer} alt="Mujer" />
+        </div>
+
+        {/* Niños */}
+        <div className={style.categoryCard} onClick={() => navigate("/catalogo/ninos")}>
+          <button className={style.categoryButton}>Para Niños</button>
+          <img src={niño} alt="Niños" />
+        </div>
       </div>
       <Footer />
     </>

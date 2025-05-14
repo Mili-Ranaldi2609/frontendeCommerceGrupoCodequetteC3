@@ -106,4 +106,48 @@
     color: red;
     padding: 2rem;
   }
+  .categoryCardsContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex-direction: row;
+    grid-template-columns: repeat(3, 1fr);
+    width: 99%;
+  }
   
+  .categoryCard {
+    position: relative;
+    cursor: pointer;
+    width: calc(33.333% - 1rem);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  
+  
+  .categoryCard:hover {
+    transform: scale(1.03);
+  }
+  
+  .categoryCard img {
+    width: auto;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .categoryButton {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
