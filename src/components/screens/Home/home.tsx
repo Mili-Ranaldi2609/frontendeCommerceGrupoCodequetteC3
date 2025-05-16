@@ -58,13 +58,12 @@ export const Home = () => {
   };
   return (
     <>
-      <NavBar />
       <div className={style.homeMainContainer}>
         <div className={style.homeImagePrincipal}>
           <img src={imagePrincipal} alt="Imagen principal tienda" />
         </div>
         <div onClick={irAlCatalogo} className={style.homeDiscountContainer} style={{ cursor: "pointer" }}>
-          <h3>Descuentos Especiales</h3>
+          <h3>Ver catalogo</h3>
         </div>
 
         <div className={style.homeMainImageContainer}>
@@ -130,7 +129,6 @@ export const Home = () => {
           <img src={niño} alt="Niños" />
         </div>
       </div>
-      <Footer />
     </>
   );
 };

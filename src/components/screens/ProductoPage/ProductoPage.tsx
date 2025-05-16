@@ -113,7 +113,6 @@ export const ProductoDetalle: FC = () => {
 
   return (
     <>
-      <NavBar />
 
       <div className={styles.detalle}>
         <div className={styles.imagenes}>
@@ -132,8 +131,6 @@ export const ProductoDetalle: FC = () => {
           <button className={styles.comprar}>Agregar al carrito</button>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 };

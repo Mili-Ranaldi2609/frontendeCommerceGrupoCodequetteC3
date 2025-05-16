@@ -20,13 +20,18 @@
   
   .homeDiscountContainer {
     margin: 1rem 0;
-    background-color: #140c0a;
+    background-color: #3E2723;
     color: white;
     padding: 1rem 2rem;
     border-radius: 1rem;
     text-align: center;
     font-size: 1.25rem;
     font-weight: 600;
+    width: 15rem;
+    height: 5rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }
   
   .homeMainImageContainer {

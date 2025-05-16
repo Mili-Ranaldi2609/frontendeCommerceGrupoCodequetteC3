@@ -86,27 +86,37 @@
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  border-radius: 15px;
-  padding: 3px 10px;
+  border-radius: 25px; 
+  padding: 5px 10px;
   background-color: #f9f9f9;
   width: 12rem;
-  height: 2rem;
+  height: 2.5rem;
 }
-
 .searchBox input {
   border: none;
   outline: none;
   font-size: 13px;
-  background: transparent;
-  margin-left: 5px;
+  background-color: transparent; 
+  box-shadow: none;
+  margin-left: 8px;
+  color: #3E2723;
+  padding: 4px;
 }
+
+.searchBox svg {
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
 
 /* Barra inferior promocional */
 .navBarPromo {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f3ede5;
+  background-color: #EFEBE9;
   font-size: 14px;
   font-weight: 400;
   color: #222;
@@ -216,6 +226,8 @@
   font-size: 1.2rem; 
   cursor: pointer;
   color: #3E2723;
+  border: none;
+  background: none;
 }
 
 

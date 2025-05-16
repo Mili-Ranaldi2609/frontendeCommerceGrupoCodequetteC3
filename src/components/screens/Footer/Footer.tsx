@@ -1,28 +1,45 @@
+// Footer.tsx
 import styles from "./footer.module.css";
 import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoInstagram } from "react-icons/io5";
 import { LuMessageCircle } from "react-icons/lu";
+import { Register } from "../Login/Register";
 
-export const Footer = () => {
+// ✅ Agregamos las props al componente
+interface FooterProps {
+  onEnviosClick: () => void;
+  onPagosClick: () => void;
+  onContactoClick: () => void;
+  onPropositoClick: () => void;
+  onPromocionesClick: () => void;
+}
+
+export const Footer = ({
+  onEnviosClick,
+  onPagosClick,
+  onContactoClick,
+  onPropositoClick,
+  onPromocionesClick
+}: FooterProps) => {
   return (
     <footer className={styles.footerContainer}>
       <div className={styles.footerInfoContainer}>
         <div>
-          <h4>SUMATE A LA COMUNIDAD</h4>
+          <h4 >REGISTRATE</h4>
         </div>
         <div>
           <h4>AYUDA</h4>
-          <p>Envíos y entregas</p>
-          <p>Opciones de pago</p>
-          <p>Contacto</p>
+          <p onClick={onEnviosClick}>Envíos y entregas</p>
+          <p onClick={onPagosClick}>Opciones de pago</p>
+          <p onClick={onContactoClick}>Contacto</p>
         </div>
         <div>
           <h4>ACERCA DE URBAN VIBES</h4>
-          <p>Propósito</p>
+          <p onClick={onPropositoClick}>Propósito</p>
         </div>
         <div>
           <h4>NOVEDADES</h4>
-          <p>Promociones</p>
+          <p onClick={onPromocionesClick}>Promociones</p>
         </div>
       </div>
 
@@ -40,4 +57,3 @@ export const Footer = () => {
     </footer>
   );
 };
-

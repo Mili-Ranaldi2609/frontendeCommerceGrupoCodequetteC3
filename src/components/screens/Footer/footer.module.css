@@ -54,3 +54,12 @@
   .footerIcons a{
     color: white;
   }
+  .footerInfoContainer p {
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .footerInfoContainer p:hover {
+    color: #888;
+  }
+  

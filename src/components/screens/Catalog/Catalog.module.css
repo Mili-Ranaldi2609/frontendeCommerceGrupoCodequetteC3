@@ -48,7 +48,7 @@
 .filtroSidebar {
     width: 250px;
     margin-right: 1rem;
-    background-color: #f0f0f0;
+    background-color: white;
     padding: 1rem;
     border-radius: 8px;
 }
@@ -63,3 +63,87 @@
 .toggleButton {
     margin-bottom: 1rem;
 }
+.filtroSeccion {
+    margin-bottom: 20px;
+    color: #3E2723;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .gridBotones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .botonFiltro {
+    border: 1px solid #3E2723;
+    background-color: white;
+    border-radius: 50%;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #3E2723;
+    width: 40px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+  
+  .botonTexto {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 4px 0;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .gridColores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .colorItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .colorCirculo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-bottom: 4px;
+    border: 1px solid #ccc;
+  }
+  .listaGenero{
+    display: flex;
+    width: 2rem;
+    flex-direction: column;
+  }
+  .botonTexto{
+    color: #3E2723;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: auto;
+    display: flex;
+  }
+  .botonActivoTalle{
+    background-color: #3E2723;
+    color: white;
+    width: 40px;
+    height: 30px;
+  }
+  .botonActivoGenero{
+    background-color: #3E2723;
+    color: white;
+    width: 70px;
+    height: auto;
+  }
+  
+  
