@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useProducto } from "../../../hooks/useProduct";
 import { ProductoCard } from "../../ProductCard/ProductCard";
 import styles from "./Catalog.module.css";
-import { NavBar } from "../Navbar/NavBar";
-import { Footer } from "../Footer/Footer";
 import { IoFilter } from "react-icons/io5";
 import classNames from "classnames";
 

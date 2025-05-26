@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Producto } from "../types/IProduct";
-import { api } from "../services/ConectionApi"; // <- tu axios con auth
+import { api, getProductos } from "../services/ConectionApi"; // <- tu axios con auth
 
 export const useProducto = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -11,7 +11,7 @@ export const useProducto = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<Producto[]>("/productos");
+      const response = await getProductos()
       setProductos(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al cargar los productos");
