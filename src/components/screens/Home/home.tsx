@@ -1,6 +1,4 @@
 import { Carousel } from "../Carousel/Carousel";
-import { Footer } from "../Footer/Footer";
-import { NavBar } from "../Navbar/NavBar";
 import style from "./home.module.css";
 import { ProductoCard } from "../../ProductCard/ProductCard";
 import { useProducto } from "../../../hooks/useProduct";
@@ -8,7 +6,7 @@ import zapatillasejemplo1 from "../../../assets/zapatillasejemplo1.jpeg";
 import zapatillasejemplo2 from "../../../assets/zapatillasejemplo2.jpeg";
 import zapatillasejemplo3 from "../../../assets/zapatillasejemplo3.jpeg";
 import hombre from "../../../assets/hombre.png";
-import mujer from "../../../assets/mujer.png";
+import mujer from "../../../assets/mujer.jpg";
 import niño from "../../../assets/niños.png";
 import futbol from "../../../assets/futbol.png";
 import basquet from "../../../assets/basquet.png";
@@ -75,7 +73,7 @@ export const Home = () => {
                 producto={{
                   id: producto.id,
                   denominacion: producto.denominacion,
-                  precioVenta: producto.precioVenta,
+                  precioOriginal: producto.precioOriginal,
                   precioFinal: producto.precioFinal,
                   imagenes: [producto.imagenes?.[0]],
                   sexo: producto.sexo,

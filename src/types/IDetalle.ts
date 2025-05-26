@@ -1,6 +1,9 @@
+import type { IColor } from "./IEnumColor";
+import type { IEnumTalle } from "./IEnumTalle";
+
 export type IDetalle = {
-  color: string;
-  talle: string;
+  color: IColor;
+  talle: IEnumTalle;
   marca: string;
   stock: number;
   precio: number;

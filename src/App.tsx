@@ -12,7 +12,8 @@ export const App = () => {
         <Route index element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />
         <Route path="producto/:id" element={<ProductoDetalle />} />
-        <Route path="catalogo" element={<Catalogo />} />
+         {/* RUTA DINÁMICA para /catalogo/mujer, /catalogo/hombre, etc. */}
+        <Route path="catalogo/:genero" element={<Catalogo />} />
         <Route path="register" element={<Register />} />
         <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
       </Route>

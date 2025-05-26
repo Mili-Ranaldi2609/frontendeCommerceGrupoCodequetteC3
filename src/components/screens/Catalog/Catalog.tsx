@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useProducto } from "../../../hooks/useProduct";
 import { ProductoCard } from "../../ProductCard/ProductCard";
 import styles from "./Catalog.module.css";
@@ -6,6 +7,9 @@ import { IoFilter } from "react-icons/io5";
 import classNames from "classnames";
 
 const Catalogo = () => {
+  const { genero } = useParams();
+  const generoNormalizado = genero?.toUpperCase();
+
   const { productos, loading, error } = useProducto();
 
   const [mostrarFiltro, setMostrarFiltro] = useState(true);
@@ -13,16 +17,31 @@ const Catalogo = () => {
   const [filtroGenero, setFiltroGenero] = useState("");
   const [filtroTalle, setFiltroTalle] = useState("");
 
+  useEffect(() => {
+    if (generoNormalizado === "MUJER") {
+      setFiltroGenero("FEMENINO");
+    } else if (generoNormalizado === "HOMBRE") {
+      setFiltroGenero("MASCULINO");
+    } else if (generoNormalizado === "NIÑO" || generoNormalizado === "NIÑA") {
+      setFiltroGenero("UNISEX_CHILD");
+    } else if (generoNormalizado === "UNISEX") {
+      setFiltroGenero("UNISEX");
+    } else {
+      setFiltroGenero("");
+    }
+  }, [generoNormalizado]);
+
   const toggleFiltro = () => setMostrarFiltro(!mostrarFiltro);
 
   const productosFiltrados = productos.filter((producto) => {
     const cumpleColor = !filtroColor || producto.detalle.color === filtroColor;
     const cumpleTalle = !filtroTalle || producto.detalle.talle?.includes(filtroTalle);
-    return cumpleColor && cumpleTalle;
+    const cumpleGenero = !filtroGenero || producto.sexo === filtroGenero;
+    return cumpleColor && cumpleTalle && cumpleGenero;
   });
 
   const talles = ["XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "2XL"];
-  const generos = ["Hombre", "Mujer", "Niño/a"];
+  const generos = ["FEMENINO", "MASCULINO", "UNISEX", "UNISEX_CHILD"];
   const colores = [
     { nombre: "Negro", color: "#000000" },
     { nombre: "Blanco", color: "#ffffff" },
@@ -54,12 +73,6 @@ const Catalogo = () => {
         <div className={styles.catalogoLayout}>
           {mostrarFiltro && (
             <aside className={styles.filtroSidebar}>
-              <div className={styles.filtroSeccion}>
-                <h4>Categorías</h4>
-                <p>Calzado</p>
-                <p>Ropa</p>
-              </div>
-
               <div className={styles.filtroSeccion}>
                 <h4>Talle</h4>
                 <div className={styles.gridBotones}>
@@ -114,7 +127,7 @@ const Catalogo = () => {
                           [styles.colorActivo]: filtroColor === nombre,
                         })}
                         style={{
-                          background: nombre === "Multicolor" ? "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)" : color,
+                          background: nombre === "Multicolor" ? color : color,
                           border: filtroColor === nombre ? "2px solid #000" : "1px solid #ccc",
                         }}
                       ></div>
@@ -123,13 +136,11 @@ const Catalogo = () => {
                   ))}
                 </div>
               </div>
-
             </aside>
           )}
 
           <div
-            className={`${styles.catalogo} ${mostrarFiltro ? styles.conFiltro : styles.sinFiltro
-              }`}
+            className={`${styles.catalogo} ${mostrarFiltro ? styles.conFiltro : styles.sinFiltro}`}
           >
             {loading && <p className={styles.loading}>Cargando productos...</p>}
             {error && <p className={styles.error}>{error}</p>}
@@ -148,5 +159,3 @@ const Catalogo = () => {
 };
 
 export default Catalogo;
-
-

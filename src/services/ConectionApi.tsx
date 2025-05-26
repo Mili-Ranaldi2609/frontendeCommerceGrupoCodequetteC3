@@ -27,6 +27,8 @@ export const createProducto = (data: any) => api.post("/producto_detalle", data)
 export const updateProducto = (id: number, data: any) => api.put(`/producto_detalle/${id}`, data);
 export const deleteProducto = (id: number) => api.delete(`/producto_detalle/${id}`);
 
+export const getProductosFiltrados = (params: Record<string, string>) =>api.get("/productos/filtrar", { params });
+
 // =====================
 // USUARIOS
 // =====================
