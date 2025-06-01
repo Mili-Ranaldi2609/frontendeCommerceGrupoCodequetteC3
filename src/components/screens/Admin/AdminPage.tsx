@@ -4,6 +4,8 @@ import { ModalAgregarProducto } from '../../ui/Modals/ModalsAdmin/AddProductModa
 import { ModalEditarProducto } from '../../ui/Modals/ModalsAdmin/EditProductModal';
 import { getCategorias, getProductos, createProducto, deleteProducto, updateProducto } from '../../../services/ConectionApi';
 import type { Producto } from '../../../types/IProduct';
+import { logout } from '../../../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 
 export const AdminPage = () => {
@@ -11,11 +13,16 @@ export const AdminPage = () => {
   const [categorias, setCategorias] = useState<string[]>([]);
   const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
   const [productoEditar, setProductoEditar] = useState<Producto | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     cargarCategorias();
     cargarProductos();
   }, []);
+  const handleLogout = () => {
+    logout()
+    navigate("/home");
+  };
+
 
   const cargarCategorias = async () => {
     const res = await getCategorias();
@@ -58,6 +65,9 @@ export const AdminPage = () => {
       <div className={styles.header}>
         <h1>Panel de Administración</h1>
         <button onClick={() => setModalAgregarAbierto(true)}>Agregar Producto</button>
+         <button onClick={handleLogout} className={styles.logoutBtn}>
+      Cerrar sesión
+    </button>
       </div>
 
       {Object.entries(productosPorCategoria).map(([categoria, lista]) => (
@@ -88,23 +98,23 @@ export const AdminPage = () => {
       />
 
       {productoEditar && (
-  <ModalEditarProducto
-    isOpen={!!productoEditar}
-    onClose={() => setProductoEditar(null)}
-    producto={productoEditar}
-    onEdit={async (id: number, data: FormData) => {
-      try {
-        const res = await updateProducto(id, data);
-        setProductos(prev =>
-          prev.map(p => (p.id === id ? res.data : p))
-        );
-        setProductoEditar(null);
-      } catch (err) {
-        console.error("Error actualizando producto", err);
-      }
-    }}
-  />
-)}
+        <ModalEditarProducto
+          isOpen={!!productoEditar}
+          onClose={() => setProductoEditar(null)}
+          producto={productoEditar}
+          onEdit={async (id: number, data: FormData) => {
+            try {
+              const res = await updateProducto(id, data);
+              setProductos(prev =>
+                prev.map(p => (p.id === id ? res.data : p))
+              );
+              setProductoEditar(null);
+            } catch (err) {
+              console.error("Error actualizando producto", err);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

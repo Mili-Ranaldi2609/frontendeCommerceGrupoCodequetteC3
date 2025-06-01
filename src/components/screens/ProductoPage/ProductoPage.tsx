@@ -39,7 +39,12 @@ export const ProductoDetalle: FC = () => {
   } = useProductoStore();
 
   useEffect(() => {
-    if (id) fetchProductoPorId(Number(id));
+    if (id) {
+      console.log("📦 ID recibido por useParams:", id);
+      fetchProductoPorId(Number(id));
+      console.log(producto?.detalle);
+      
+    }
   }, [id, fetchProductoPorId]);
 
   useEffect(() => {

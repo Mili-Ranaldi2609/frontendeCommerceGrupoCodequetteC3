@@ -1,22 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
+import { loginUsuario } from "../../../services/ConectionApi";
 
 type Props = {
   visible: boolean;
   onClose: () => void;
 };
+
 export const LoginModal = ({ visible, onClose }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  
   if (!visible) return null;
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Iniciando sesión con", email, password);
-    onClose();
+    try {
+      const response = await loginUsuario(email, password);
+      const { token, role, username, email: userEmail } = response.data;
+
+      // Guardar en localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem(
+        "usuario",
+        JSON.stringify({ username, email: userEmail, role })
+      );
+
+      // Redirección por rol
+      if (role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
+
+      onClose();
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      alert("Credenciales inválidas");
+    }
   };
 
   const irARegistro = () => {
@@ -26,7 +49,7 @@ export const LoginModal = ({ visible, onClose }: Props) => {
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      onClose(); // Cierra el modal si el clic fue en el fondo
+      onClose();
     }
   };
 

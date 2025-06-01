@@ -2,11 +2,10 @@ import { useState } from "react";
 import styles from "./EditUserModal.module.css";
 
 interface User {
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
-    gender: string;
-    password: string;
+    password?: string;
     profileImage?: string;
 }
 
@@ -45,24 +44,16 @@ export const EditUserModal = ({ user, onClose, onSave }: Props) => {
                     <div className={styles.nameLastname}>
                         <label>
                             Nombre:
-                            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
+                            <input type="text" name="firstname" value={formData.firstname} onChange={handleChange} />
                         </label>
                         <label>
                             Apellido:
-                            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
+                            <input type="text" name="lastname" value={formData.lastname} onChange={handleChange} />
                         </label>
                     </div>
                     <label>
                         Email:
                         <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                    </label>
-                    <label>
-                        Sexo:
-                        <select name="gender" value={formData.gender} onChange={handleChange}>
-                            <option value="HOMBRE">Hombre</option>
-                            <option value="MUJER">Mujer</option>
-                            <option value="OTRO">Otro</option>
-                        </select>
                     </label>
                     <label>
                         Contraseña:
