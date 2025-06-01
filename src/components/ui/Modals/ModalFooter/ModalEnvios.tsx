@@ -1,4 +1,4 @@
-import { Modal } from "./Modal";
+import { Modal } from "../Modal/Modal"
 
 export const EnviosModal = ({ show, onClose }: { show: boolean; onClose: () => void }) => {
   return (

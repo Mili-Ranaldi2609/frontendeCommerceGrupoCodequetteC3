@@ -1,4 +1,3 @@
-
 .navBarPrincipal {
   position: sticky;
   top: 0;
@@ -50,30 +49,47 @@
   display: flex;
   align-items: center;
 }
-
-
+.navBarLeftLinks,
+.navBarRight {
+  flex: 0 0 auto;
+}
 /* Menú central */
 .navBarCenter {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   display: flex;
-  gap: 1.5rem;
-  font-size: 14px;
-  font-weight: 500;
+  gap: 2rem;
+  font-size: 15px;
+  font-weight: 600;
   justify-content: center;
+  align-items: center;
+  color: #3E2723;
 }
-
 
 .navBarCenter p {
   cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  position: relative;
 }
 
-.navBarCenter .active {
-  font-weight: 700;
-  border-bottom: 2px solid #4a2d2d;
+.navBarCenter p:hover {
+  color: #8B4513;
 }
 
+.navBarCenter p::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background-color: #8B4513;
+  transition: width 0.3s ease-in-out;
+}
+
+.navBarCenter p:hover::after {
+  width: 100%;
+}
 /* Íconos + búsqueda derecha */
 .navBarRight {
   display: flex;
@@ -102,7 +118,6 @@
   color: #3E2723;
   padding: 4px;
 }
-
 .searchBox svg {
   background: none;
   border: none;
@@ -116,7 +131,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #EFEBE9;
+  background-color: #f4ece8;
   font-size: 14px;
   font-weight: 400;
   color: #222;
@@ -182,14 +197,53 @@
 .megaMenu {
   position: absolute;
   top: 100%;
-  left: 0;
-  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  max-width: 2000px;
   background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   display: flex;
-  justify-content: space-around;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  justify-content: space-between;
+  gap: 2rem;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform-origin: top center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  flex-direction: row;
+}
+
+/* Cuando se muestra */
+.megaMenuVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Subcategorías u opciones dentro del mega menú */
+.megaMenuColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.megaMenuColumn a {
+  text-decoration: none;
+  color: #3E2723;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.megaMenuColumn a:hover {
+  color: #8B4513;
+}
+.menuWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Animaciones */
@@ -229,10 +283,53 @@
   border: none;
   background: none;
 }
+.cartIconWrapper {
+  position: relative;
+}
 
+.cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #3E2723;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
+.cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #3E2723;
+  cursor: pointer;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
 
-
-
-
-
+.cartBadgeAnimate {
+  animation: bounceIn 0.3s ease;
+}

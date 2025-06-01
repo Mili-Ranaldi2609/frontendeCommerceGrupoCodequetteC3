@@ -1,5 +1,7 @@
 import { useState } from "react";
-import styles from "./cartPage.module.css";
+import styles from "./Cart.module.css";
+import { useCartStore } from "../../../store/useCartStore";
+import { Link } from "react-router-dom";
 
 interface CartItem {
   id: number;
@@ -12,10 +14,12 @@ interface CartPageProps {
   items: CartItem[];
 }
 
-export const CartPage = ({ items }: CartPageProps) => {
+export const CartPage = () => {
+  const { items, increaseQuantity, decreaseQuantity } = useCartStore();
+
   const getSubtotal = (item: CartItem) => item.price * item.quantity;
   const subtotal = items.reduce((acc, item) => acc + getSubtotal(item), 0);
-  const total = subtotal; // Aquí puedes agregar costos adicionales como impuestos si es necesario
+  const total = subtotal;
 
   return (
     <div className={styles.cartPage}>
@@ -27,7 +31,11 @@ export const CartPage = ({ items }: CartPageProps) => {
               <div key={item.id} className={styles.cartItem}>
                 <div>{item.name}</div>
                 <div>${item.price}</div>
-                <div>{item.quantity}</div>
+                <div className={styles.quantityControls}>
+                  <button onClick={() => decreaseQuantity(item.id)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => increaseQuantity(item.id)}>+</button>
+                </div>
                 <div>${getSubtotal(item)}</div>
               </div>
             ))}
@@ -44,8 +52,12 @@ export const CartPage = ({ items }: CartPageProps) => {
               <span>${total}</span>
             </div>
             <div className={styles.buttons}>
-              <button className={styles.payBtn} onClick={() => alert("Iniciar pago")}>Iniciar Pago</button>
-              <button className={styles.continueShoppingBtn} onClick={() => alert("Seguir comprando")}>Seguir Comprando</button>
+              <button className={styles.payBtn} onClick={() => alert("Iniciar pago")}>
+                Iniciar Pago
+              </button>
+              <Link to="/catalogo">
+                <button className={styles.continueShoppingBtn}>Seguir Comprando</button>
+              </Link>
             </div>
           </div>
         </>

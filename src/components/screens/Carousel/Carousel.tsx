@@ -7,61 +7,70 @@ interface CarouselProps<T> {
 }
 
 export const Carousel = <T,>({ toList, renderItem }: CarouselProps<T>) => {
-  const visibleCount = 4;
+  const defaultVisibleCount = 4;
+  const visibleCount = Math.min(defaultVisibleCount, toList.length);
   const totalItems = toList.length;
 
   const [currentIndex, setCurrentIndex] = useState(visibleCount);
-  const [isTransitioning, setIsTransitioning] = useState(false); // Estado para controlar la transición
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Crear lista con clones (últimos y primeros ítems)
-  const extendedList = [
-    ...toList.slice(-visibleCount),
-    ...toList,
-    ...toList.slice(0, visibleCount),
-  ];
+  const hasScroll = totalItems > visibleCount;
+
+  // Extiende la lista solo si hay suficientes elementos
+  const extendedList = hasScroll
+    ? [
+        ...toList.slice(-visibleCount),
+        ...toList,
+        ...toList.slice(0, visibleCount),
+      ]
+    : toList;
 
   const nextSlide = () => {
-    setIsTransitioning(true); // Habilitar la transición
+    if (!hasScroll) return;
+    setIsTransitioning(true);
     setCurrentIndex((prev) => prev + 1);
   };
 
   const prevSlide = () => {
-    setIsTransitioning(true); // Habilitar la transición
+    if (!hasScroll) return;
+    setIsTransitioning(true);
     setCurrentIndex((prev) => prev - 1);
   };
 
   useEffect(() => {
+    if (!hasScroll) return;
+
     if (currentIndex === totalItems + visibleCount) {
-      // Fin falso, ir al inicio real
       setTimeout(() => {
-        setCurrentIndex(visibleCount); // Salta al índice real
-        setIsTransitioning(false); // Deshabilitar la transición
-      }, 500); // Duración de la transición (tiempo suficiente para que la animación se complete)
+        setCurrentIndex(visibleCount);
+        setIsTransitioning(false);
+      }, 500);
     }
 
     if (currentIndex === 0) {
-      // Inicio falso, ir al final real
       setTimeout(() => {
         setCurrentIndex(totalItems);
-        setIsTransitioning(false); // Deshabilitar la transición
-      }, 100); // Duración de la transición (tiempo suficiente para que la animación se complete)
+        setIsTransitioning(false);
+      }, 10);
     }
-  }, [currentIndex, totalItems, visibleCount]);
+  }, [currentIndex, totalItems, visibleCount, hasScroll]);
 
   const trackStyle = {
     transform: `translateX(-${(100 / visibleCount) * currentIndex}%)`,
-    transition: isTransitioning ? "transform 0.5s ease" : "none", // Aplicar la transición solo cuando estamos cambiando
+    transition: isTransitioning ? "transform 0.5s ease" : "none",
+    width: hasScroll ? "auto" : "100%",
   };
 
   return (
     <div className={styles.carouselContainer}>
-      <button className={styles.prevBtn} onClick={prevSlide}>{"<"}</button>
+      {hasScroll && (
+        <button className={styles.prevBtn} onClick={prevSlide}>
+          {"<"}
+        </button>
+      )}
 
       <div className={styles.carouselViewport}>
-        <div
-          className={styles.carouselTrack}
-          style={trackStyle}
-        >
+        <div className={styles.carouselTrack} style={trackStyle}>
           {extendedList.map((item, index) => (
             <div key={index} className={styles.carouselItem}>
               {renderItem(item)}
@@ -70,7 +79,11 @@ export const Carousel = <T,>({ toList, renderItem }: CarouselProps<T>) => {
         </div>
       </div>
 
-      <button className={styles.nextBtn} onClick={nextSlide}>{">"}</button>
+      {hasScroll && (
+        <button className={styles.nextBtn} onClick={nextSlide}>
+          {">"}
+        </button>
+      )}
     </div>
   );
 };

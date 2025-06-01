@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import styles from "./cartModal.module.css";
 import { BsCart3 } from "react-icons/bs";
+import { useCartStore } from "../../../store/useCartStore";
+import { Link } from "react-router-dom";
 
 interface CartItem {
     id: number;
@@ -16,7 +18,9 @@ interface CartModalProps {
     onClose: () => void;
 }
 
-export const CartModal = ({ isOpen, items, total, onClose }: CartModalProps) => {
+export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose}) => {
+    const { items, total } = useCartStore();
+
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -37,6 +41,7 @@ export const CartModal = ({ isOpen, items, total, onClose }: CartModalProps) => 
     };
 
     return (
+        <>
         <div className={styles.overlay} onClick={handleOverlayClick}>
             <div className={styles.modal}>
                 <div className={styles.modalContent}>
@@ -56,7 +61,9 @@ export const CartModal = ({ isOpen, items, total, onClose }: CartModalProps) => 
                             </div>
                             <div className={styles.total}>
                                 <p>Total: ${total}</p>
-                                <button className={styles.checkoutBtn} onClick={() => alert("Ir al carrito de compra")}>Finalizar Compra</button>
+                                <Link to={"/cart"}>
+                                <button className={styles.checkoutBtn}>Finalizar Compra</button>
+                                </Link>
                             </div>
                         </>
                     ) : (
@@ -76,6 +83,7 @@ export const CartModal = ({ isOpen, items, total, onClose }: CartModalProps) => 
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

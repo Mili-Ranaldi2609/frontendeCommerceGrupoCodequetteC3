@@ -6,7 +6,6 @@ type Props = {
   visible: boolean;
   onClose: () => void;
 };
-
 export const LoginModal = ({ visible, onClose }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,17 +16,22 @@ export const LoginModal = ({ visible, onClose }: Props) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Iniciando sesión con", email, password);
-    // Aquí iría tu lógica de autenticación
     onClose();
   };
 
   const irARegistro = () => {
-    onClose(); // cerramos el modal primero
+    onClose();
     navigate("/register");
   };
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose(); // Cierra el modal si el clic fue en el fondo
+    }
+  };
+
   return (
-    <div className={styles.overlay}>
+    <div className={styles.overlay} onClick={handleOverlayClick}>
       <div className={styles.modal}>
         <h2>Iniciar Sesión</h2>
         <form onSubmit={handleLogin}>
@@ -62,4 +66,3 @@ export const LoginModal = ({ visible, onClose }: Props) => {
     </div>
   );
 };
-

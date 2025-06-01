@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useProducto } from "../../../hooks/useProduct";
 import { ProductoCard } from "../../ProductCard/ProductCard";
@@ -6,152 +6,196 @@ import styles from "./Catalog.module.css";
 import { IoFilter } from "react-icons/io5";
 import classNames from "classnames";
 
+const generoMap: Record<string, string> = {
+  MUJER: "FEMENINO",
+  HOMBRE: "MASCULINO",
+  NIÑO: "UNISEX_CHILD",
+  NIÑA: "UNISEX_CHILD",
+  UNISEX: "UNISEX",
+};
+
+const talles = ["XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "2XL"];
+const generos = ["FEMENINO", "MASCULINO", "UNISEX", "UNISEX_CHILD"];
+const colores = [
+  { nombre: "NEGRO", color: "#000000" },
+  { nombre: "BLANCO", color: "#ffffff" },
+  { nombre: "AMARILLO", color: "#ffff00" },
+  { nombre: "AZUL", color: "#0000ff" },
+  { nombre: "ROJO", color: "#ff0000" },
+  { nombre: "GRIS", color: "#808080" },
+  { nombre: "MARRON", color: "#8B4513" },
+  { nombre: "NARANJA", color: "#FFA500" },
+  { nombre: "VIOLETA", color: "#800080" },
+  { nombre: "ROSA", color: "#FFC0CB" },
+  { nombre: "CELESTE", color: "#87CEEB" },
+  { nombre: "VERDE", color: "#008000" },
+  { nombre: "BEIGE", color: "#F5F5DC" },
+  { nombre: "MORADO", color: "#9370DB" },
+  {
+    nombre: "MULTICOLOR",
+    color: "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)",
+  },
+];
+
 const Catalogo = () => {
   const { genero } = useParams();
-  const generoNormalizado = genero?.toUpperCase();
+  const generoNormalizado = genero?.toUpperCase() || "";
 
   const { productos, loading, error } = useProducto();
 
   const [mostrarFiltro, setMostrarFiltro] = useState(true);
-  const [filtroColor, setFiltroColor] = useState("");
-  const [filtroGenero, setFiltroGenero] = useState("");
-  const [filtroTalle, setFiltroTalle] = useState("");
+  const [filtros, setFiltros] = useState({ color: "", genero: "", talle: "" });
 
   useEffect(() => {
-    if (generoNormalizado === "MUJER") {
-      setFiltroGenero("FEMENINO");
-    } else if (generoNormalizado === "HOMBRE") {
-      setFiltroGenero("MASCULINO");
-    } else if (generoNormalizado === "NIÑO" || generoNormalizado === "NIÑA") {
-      setFiltroGenero("UNISEX_CHILD");
-    } else if (generoNormalizado === "UNISEX") {
-      setFiltroGenero("UNISEX");
-    } else {
-      setFiltroGenero("");
-    }
+    setFiltros((prev) => ({
+      ...prev,
+      genero: generoMap[generoNormalizado] || "",
+    }));
   }, [generoNormalizado]);
 
-  const toggleFiltro = () => setMostrarFiltro(!mostrarFiltro);
+  const toggleFiltro = () => setMostrarFiltro((prev) => !prev);
 
-  const productosFiltrados = productos.filter((producto) => {
-    const cumpleColor = !filtroColor || producto.detalle.color === filtroColor;
-    const cumpleTalle = !filtroTalle || producto.detalle.talle?.includes(filtroTalle);
-    const cumpleGenero = !filtroGenero || producto.sexo === filtroGenero;
-    return cumpleColor && cumpleTalle && cumpleGenero;
-  });
+  const toggleFiltroIndividual = (key: keyof typeof filtros, valor: string) => {
+    setFiltros((prev) => ({
+      ...prev,
+      [key]: prev[key] === valor ? "" : valor,
+    }));
+  };
 
-  const talles = ["XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "2XL"];
-  const generos = ["FEMENINO", "MASCULINO", "UNISEX", "UNISEX_CHILD"];
-  const colores = [
-    { nombre: "Negro", color: "#000000" },
-    { nombre: "Blanco", color: "#ffffff" },
-    { nombre: "Amarillo", color: "#ffff00" },
-    { nombre: "Azul", color: "#0000ff" },
-    { nombre: "Rojo", color: "#ff0000" },
-    { nombre: "Gris", color: "#808080" },
-    { nombre: "Marron", color: "#8B4513" },
-    { nombre: "Naranja", color: "#FFA500" },
-    { nombre: "Violeta", color: "#800080" },
-    { nombre: "Rosa", color: "#FFC0CB" },
-    { nombre: "Celeste", color: "#87CEEB" },
-    { nombre: "Verde", color: "#008000" },
-    { nombre: "Beige", color: "#F5F5DC" },
-    { nombre: "Morado", color: "#9370DB" },
-    { nombre: "Multicolor", color: "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)" }
-  ];
+  const productosFiltrados = useMemo(() => {
+    return productos.filter((producto) => {
+      const cumpleColor = !filtros.color || producto.detalle.color === filtros.color;
+      const cumpleTalle = !filtros.talle || producto.detalle.talle?.includes(filtros.talle);
+      const cumpleGenero = !filtros.genero || producto.sexo === filtros.genero;
+      return cumpleColor && cumpleTalle && cumpleGenero;
+    });
+  }, [productos, filtros]);
 
   return (
     <div className="appContainer">
       <div className={styles.catalogoContainer}>
         <div className={styles.tituloyfiltro}>
           <h1 className={styles.titulo}>Catálogo de Productos</h1>
-          <a className={styles.filtro} onClick={toggleFiltro}>
+          <button
+            className={styles.filtro}
+            onClick={toggleFiltro}
+            aria-pressed={mostrarFiltro}
+            aria-label="Mostrar u ocultar filtros"
+            type="button"
+          >
             {mostrarFiltro ? "Ocultar Filtros" : "Mostrar Filtros"} <IoFilter />
-          </a>
+          </button>
         </div>
 
         <div className={styles.catalogoLayout}>
           {mostrarFiltro && (
             <aside className={styles.filtroSidebar}>
-              <div className={styles.filtroSeccion}>
+              {/* Filtro por talle */}
+              <section className={styles.filtroSeccion}>
                 <h4>Talle</h4>
                 <div className={styles.gridBotones}>
                   {talles.map((talle) => (
                     <button
                       key={talle}
+                      type="button"
                       className={classNames(styles.botonFiltro, {
-                        [styles.botonActivoTalle]: filtroTalle === talle,
+                        [styles.botonActivoTalle]: filtros.talle === talle,
                       })}
-                      onClick={() =>
-                        setFiltroTalle(filtroTalle === talle ? "" : talle)
-                      }
+                      onClick={() => toggleFiltroIndividual("talle", talle)}
+                      aria-pressed={filtros.talle === talle}
                     >
                       {talle}
                     </button>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div className={styles.filtroSeccion}>
+              {/* Filtro por género */}
+              <section className={styles.filtroSeccion}>
                 <h4>Género</h4>
                 <div className={styles.listaGenero}>
                   {generos.map((g) => (
                     <button
                       key={g}
+                      type="button"
                       className={classNames(styles.botonTexto, {
-                        [styles.botonActivoGenero]: filtroGenero === g,
+                        [styles.botonActivoGenero]: filtros.genero === g,
                       })}
-                      onClick={() =>
-                        setFiltroGenero(filtroGenero === g ? "" : g)
-                      }
+                      onClick={() => toggleFiltroIndividual("genero", g)}
+                      aria-pressed={filtros.genero === g}
                     >
                       {g}
                     </button>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div className={styles.filtroSeccion}>
-                <h4>Color</h4>
-                <div className={styles.gridColores}>
-                  {colores.map(({ nombre, color }) => (
+              {/* Filtro por color */}
+              <div className={styles.Colorestitulo}>
+                <h4>Colores</h4>
+              </div>
+              <section className={styles.filtrosColores} role="list">
+                {colores.map(({ nombre, color }) => (
+                  <div key={nombre} className={styles.colorFiltroWrapper}>
                     <div
-                      key={nombre}
-                      className={styles.colorItem}
-                      onClick={() =>
-                        setFiltroColor(filtroColor === nombre ? "" : nombre)
+                      className="checkbox-wrapper-12"
+                      role="listitem"
+                      onClick={() => toggleFiltroIndividual("color", nombre)}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (["Enter", " "].includes(e.key)) {
+                          e.preventDefault();
+                          toggleFiltroIndividual("color", nombre);
+                        }
+                      }}
+                      aria-pressed={filtros.color === nombre}
+                      aria-label={`Filtrar por color ${nombre}`}
+                      style={
+                        {
+                          "--circle-color": color,
+                          "--splash-color": color,
+                        } as React.CSSProperties
                       }
                     >
-                      <div
-                        className={classNames(styles.colorCirculo, {
-                          [styles.colorActivo]: filtroColor === nombre,
-                        })}
-                        style={{
-                          background: nombre === "Multicolor" ? color : color,
-                          border: filtroColor === nombre ? "2px solid #000" : "1px solid #ccc",
-                        }}
-                      ></div>
-                      <span>{nombre}</span>
+                      <div className="cbx">
+                        <input
+                          type="checkbox"
+                          checked={filtros.color === nombre}
+                          readOnly
+                          tabIndex={-1}
+                        />
+                        <label />
+                        {filtros.color === nombre && (
+                          <svg viewBox="0 0 12 10" stroke="#fff" strokeWidth="1.5" fill="none">
+                            <polyline points="1.5 6 4.5 9 10.5 1" />
+                          </svg>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <span className={styles.colorNombre}>{nombre}</span>
+                  </div>
+
+                ))}
+              </section>
             </aside>
           )}
 
-          <div
-            className={`${styles.catalogo} ${mostrarFiltro ? styles.conFiltro : styles.sinFiltro}`}
+          <main
+            className={classNames(styles.catalogo, {
+              [styles.conFiltro]: mostrarFiltro,
+              [styles.sinFiltro]: !mostrarFiltro,
+            })}
           >
             {loading && <p className={styles.loading}>Cargando productos...</p>}
             {error && <p className={styles.error}>{error}</p>}
-            {productosFiltrados.length > 0 ? (
-              productosFiltrados.map((producto) => (
-                <ProductoCard key={producto.id} producto={producto} />
-              ))
-            ) : (
+            {!loading && !error && productosFiltrados.length === 0 && (
               <p className={styles.error}>No se encontraron productos.</p>
             )}
-          </div>
+            {!loading && !error &&
+              productosFiltrados.map((producto) => (
+                <ProductoCard key={producto.id} producto={producto} />
+              ))}
+          </main>
         </div>
       </div>
     </div>

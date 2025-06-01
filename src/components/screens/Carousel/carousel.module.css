@@ -6,6 +6,7 @@
   width: 100%;
   padding: 1rem 0;
   overflow: hidden;
+  user-select: none; /* evitar selección accidental */
 }
 
 .carouselViewport {
@@ -16,6 +17,7 @@
 .carouselTrack {
   display: flex;
   width: fit-content;
+  will-change: transform; /* para optimizar la animación */
 }
 
 .carouselItem {
@@ -25,6 +27,12 @@
   background-color: #fff;
   border-radius: 8px;
   text-align: center;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.carouselItem:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .carouselItem img {
@@ -32,22 +40,27 @@
   height: auto;
   border-radius: 4px;
   object-fit: cover;
+  display: block;
+  margin: 0 auto;
 }
+
+/* Botones */
 
 .prevBtn,
 .nextBtn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.5rem;
-  background-color: #3e27238d;
+  font-size: 1.75rem;
+  background-color: rgba(62, 39, 35, 0.55);
   color: white;
   border: none;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.85rem;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1;
-  transition: background-color 0.3s;
+  z-index: 2;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
 .prevBtn:hover,
@@ -55,12 +68,49 @@
   background-color: #3E2723;
 }
 
+.prevBtn:disabled,
+.nextBtn:disabled {
+  background-color: rgba(62, 39, 35, 0.2);
+  cursor: not-allowed;
+}
+
 .prevBtn {
-  left: 10px;
+  left: 8px;
 }
 
 .nextBtn {
-  right: 10px;
+  right: 8px;
+}
+
+/* Responsividad */
+
+@media (max-width: 1024px) {
+  .carouselItem {
+    flex: 0 0 33.3333%; /* mostrar 3 items */
+  }
+}
+
+@media (max-width: 768px) {
+  .carouselItem {
+    flex: 0 0 50%; /* mostrar 2 items */
+  }
+  .prevBtn,
+  .nextBtn {
+    font-size: 1.5rem;
+    padding: 0.4rem 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .carouselItem {
+    flex: 0 0 100%; /* mostrar 1 item */
+    padding: 0.5rem;
+  }
+  .prevBtn,
+  .nextBtn {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.5rem;
+  }
 }
 
 

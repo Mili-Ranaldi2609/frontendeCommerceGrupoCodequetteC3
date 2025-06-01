@@ -4,6 +4,9 @@ import { ProductoDetalle } from "./components/screens/ProductoPage/ProductoPage"
 import Catalogo from "./components/screens/Catalog/Catalog";
 import { Register } from "./components/screens/Login/Register";
 import Layout from "./components/Layout/Layout";
+import {AdminPage} from './components/screens/Admin/AdminPage';
+import { CartPage } from "./components/screens/Cart/Cart";
+import { UserProfile } from "./components/screens/UserProfile/UserProfile";
 
 export const App = () => {
   return (
@@ -14,8 +17,12 @@ export const App = () => {
         <Route path="producto/:id" element={<ProductoDetalle />} />
          {/* RUTA DINÁMICA para /catalogo/mujer, /catalogo/hombre, etc. */}
         <Route path="catalogo/:genero" element={<Catalogo />} />
+        <Route path="catalogo" element={<Catalogo />} />
         <Route path="register" element={<Register />} />
+        <Route path="cart" element={<CartPage />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+        <Route path="/admin" element={<AdminPage />} />
       </Route>
     </Routes>
   );

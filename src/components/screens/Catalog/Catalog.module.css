@@ -1,149 +1,264 @@
-.catalogoContainer{
-    flex: 1;
+/* --- Layout Principal --- */
+.catalogoContainer {
+  flex: 1;
+}
+
+.catalogoLayout {
+  display: flex;
+  width: 100%;
 }
 
 .catalogo {
-    display: grid;
-    gap: 1.5rem;
-    width: 100%;
-    height: auto;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 0 auto;
 }
-.tituloyfiltro {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    width: 95%; 
-    margin-bottom: 1rem; 
-  }
-  
-  .filtro {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 1rem;
-    color: #3E2723;
-  }
-  
-  .filtro i {
-    font-size: 3rem; 
-    margin-left: 0.5rem;
-    color: #3E2723;
-  }
-  
+
+/* Distribución por filtros */
 .conFiltro {
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+  grid-template-columns: repeat(3, 1fr);
 }
-
-/* Cuando el filtro está oculto: 4 columnas */
 .sinFiltro {
-    grid-template-columns: repeat(4, 1fr);
-    width: 100%;
+  grid-template-columns: repeat(4, 1fr);
 }
 
-/* Sidebar de filtros */
+/* --- Título y Filtros --- */
+.tituloyfiltro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  margin: 1rem;
+}
+
+.titulo {
+  font-size: 2rem;
+  color: #3E2723;
+}
+
+.filtro {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #3E2723;
+  background: none;
+}
+
+.filtro i {
+  font-size: 3rem;
+  margin-left: 0.5rem;
+}
+
+/* --- Sidebar de Filtros --- */
 .filtroSidebar {
-    width: 250px;
-    margin-right: 1rem;
-    background-color: white;
-    padding: 1rem;
-    border-radius: 8px;
+  width: 250px;
+  margin-right: 1rem;
+  background:none;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: #3E2723;
 }
 
-/* Contenedor para el filtro y el catálogo */
-.catalogoLayout {
-    display: flex;
-    width: 100%;
-}
-
-/* Botón para mostrar/ocultar el filtro */
 .toggleButton {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
+
 .filtroSeccion {
-    margin-bottom: 20px;
-    color: #3E2723;
-    align-items: center;
-    justify-content: center;
+  margin-bottom: 20px;
+  color: #3E2723;
+}
+
+/* --- Botones de Filtro --- */
+.gridBotones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.botonFiltro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #3E2723;
+  background-color: white;
+  color: #3E2723;
+  border-radius: 50%;
+  width: 40px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.botonTexto {
+  background: none;
+  border: none;
+  color: #3E2723;
+  font-size: 13px;
+  width: 3rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+/* Botones activos */
+.botonActivoTalle {
+  background-color: #3E2723;
+  color: white;
+  width: 40px;
+  height: 30px;
+}
+
+.botonActivoGenero {
+  background-color: #3E2723;
+  color: white;
+  width: 7rem;
+}
+
+/* --- Género --- */
+.listaGenero {
+  display: flex;
+  flex-direction: column;
+  width: 2rem;
+}
+
+/* --- Colores --- */
+.Colorestitulo {
+  width: 100%;
+  color: #3E2723;
+  margin-bottom: 0.5rem; 
+}
+
+/* --- Splash Animation Checkbox (estilo global) --- */
+:global(.checkbox-wrapper-12) {
+  position: relative;
+}
+
+:global(.checkbox-wrapper-12 input[type="checkbox"]) {
+  appearance: none;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  outline: none;
+  display: flex;
+  border: none;
+  background: none;
+}
+
+:global(.checkbox-wrapper-12 .cbx) {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  display: flex;
+  background: none;
+  border: none;
+}
+
+:global(.checkbox-wrapper-12 .cbx label) {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--circle-color, transparent);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: background 0.3s ease;
+  pointer-events: none;
+  border: none;
+}
+
+:global(.checkbox-wrapper-12 .cbx svg) {
+  position: absolute;
+  top: 5px;
+  left: 4px;
+  pointer-events: none;
+}
+
+:global(.checkbox-wrapper-12 .cbx svg path) {
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 19;
+  stroke-dashoffset: 19;
+  transition: stroke-dashoffset 0.3s ease 0.2s;
+}
+
+:global(.checkbox-wrapper-12 .cbx input:checked + label) {
+  animation: splash-12 0.6s ease forwards;
+}
+
+:global(.checkbox-wrapper-12 .cbx input:checked + label + svg path) {
+  stroke-dashoffset: 0;
+}
+
+@keyframes splash-12 {
+  40% {
+    background: var(--splash-color, #866efb);
+    box-shadow:
+      0 -18px 0 -8px var(--splash-color, #866efb),
+      16px -8px 0 -8px var(--splash-color, #866efb),
+      16px 8px 0 -8px var(--splash-color, #866efb),
+      0 18px 0 -8px var(--splash-color, #866efb),
+      -16px 8px 0 -8px var(--splash-color, #866efb),
+      -16px -8px 0 -8px var(--splash-color, #866efb);
   }
-  
-  .gridBotones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+
+  100% {
+    background: var(--splash-color, #866efb);
+    box-shadow:
+      0 -36px 0 -10px transparent,
+      32px -16px 0 -10px transparent,
+      32px 16px 0 -10px transparent,
+      0 36px 0 -10px transparent,
+      -32px 16px 0 -10px transparent,
+      -32px -16px 0 -10px transparent;
   }
-  
-  .botonFiltro {
-    border: 1px solid #3E2723;
-    background-color: white;
-    border-radius: 50%;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: #3E2723;
-    width: 40px;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-  }
-  
-  .botonTexto {
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 4px 0;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .gridColores {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  
-  .colorItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 10px;
-    text-align: center;
-    cursor: pointer;
-  }
-  
-  .colorCirculo {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    margin-bottom: 4px;
-    border: 1px solid #ccc;
-  }
-  .listaGenero{
-    display: flex;
-    width: 2rem;
-    flex-direction: column;
-  }
-  .botonTexto{
-    color: #3E2723;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: auto;
-    display: flex;
-  }
-  .botonActivoTalle{
-    background-color: #3E2723;
-    color: white;
-    width: 40px;
-    height: 30px;
-  }
-  .botonActivoGenero{
-    background-color: #3E2723;
-    color: white;
-    width: 70px;
-    height: auto;
-  }
-  
-  
+}
+
+/* --- Estados --- */
+.loading,
+.error {
+  text-align: center;
+  font-weight: bold;
+  color: #a94442;
+}
+.colorFiltroItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  margin: 6px;
+}
+.filtrosColores {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px; 
+  margin-top: 1rem;
+  justify-items: center; 
+}
+
+.colorFiltroWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
+.colorNombre {
+  font-size: 8px;
+  text-align: center;
+  margin-top: 4px;
+  color: #333;
+}

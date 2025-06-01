@@ -3,11 +3,11 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { NavBar } from "../screens/Navbar/NavBar";
 import { Footer } from "../screens/Footer/Footer";
-import { EnviosModal } from "../ui/ModalsFooter/ModalEnvios";
-import { OpcionesPagoModal } from "../ui/ModalsFooter/OpcionesPagoModal";
-import { ContactoModal } from "../ui/ModalsFooter/ContactoModal";
-import { PropositoModal } from "../ui/ModalsFooter/PropositoModal";
-import { PromocionesModal } from "../ui/ModalsFooter/PromocionesModal";
+import { EnviosModal } from "../ui/Modals/ModalFooter/ModalEnvios";
+import { OpcionesPagoModal } from "../ui/Modals/ModalFooter/OpcionesPagoModal";
+import { ContactoModal } from "../ui/Modals/ModalFooter/ContactoModal";
+import { PropositoModal } from "../ui/Modals/ModalFooter/PropositoModal";
+import { PromocionesModal } from "../ui/Modals/ModalFooter/PromocionesModal";
 // Agregá más modales si querés
 
 const Layout = () => {

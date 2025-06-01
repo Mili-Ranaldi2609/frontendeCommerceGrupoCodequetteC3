@@ -8,7 +8,7 @@ import { MegaMenu } from "../../ui/MegaMenu/MegaMenu";
 import { Link } from "react-router-dom";
 import { LoginModal } from "../Login/Login";
 import { CartModal } from "../Cart/CartModal";
-
+import { useCartStore } from "../../../store/useCartStore";
 
 export const NavBar = () => {
   interface CartItem {
@@ -25,13 +25,24 @@ export const NavBar = () => {
   ];
   const [hovered, setHovered] = useState<string | null>(null);
   const [sexoSeleccionado, setSexoSeleccionado] = useState<string | null>(null);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [fraseActual, setFraseActual] = useState(0);
   const [animacion, setAnimacion] = useState("entrada");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const items = useCartStore((state) => state.items);
+  const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const cartQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const [animateBadge, setAnimateBadge] = useState(false);
+  useEffect(() => {
+    if (cartQuantity > 0) {
+      setAnimateBadge(true);
+      const timeout = setTimeout(() => setAnimateBadge(false), 300); // duración de la animación
+      return () => clearTimeout(timeout);
+    }
+  }, [cartQuantity]);
+
 
   useEffect(() => {
     const intervalo = setInterval(() => {
@@ -70,31 +81,22 @@ export const NavBar = () => {
             <p>Suscribite</p>
             <p>Ayuda</p>
           </div>
-          <div className={styles.navBarCenter}>
-            <p
-              onMouseEnter={() => setSexoSeleccionado("MASCULINO")}
-              onMouseLeave={() => setSexoSeleccionado(null)}
-            >
-              Hombre
-            </p>
-            <p
-              onMouseEnter={() => setSexoSeleccionado("FEMENINO")}
-              onMouseLeave={() => setSexoSeleccionado(null)}
-            >
-              Mujer
-            </p>
-            <p
-              onMouseEnter={() => setSexoSeleccionado("UNISEX_CHILD")}
-              onMouseLeave={() => setSexoSeleccionado(null)}
-            >
-              Niño/a
-            </p>
-            <p
-              onMouseEnter={() => setSexoSeleccionado("UNISEX")}
-              onMouseLeave={() => setSexoSeleccionado(null)}
-            >
-              Unisex
-            </p>
+          <div
+            className={styles.menuWrapper}
+            onMouseEnter={() => { }}
+            onMouseLeave={() => setSexoSeleccionado(null)}
+          >
+            <div className={styles.navBarCenter}>
+              <p onMouseEnter={() => setSexoSeleccionado("MASCULINO")}>Hombre</p>
+              <p onMouseEnter={() => setSexoSeleccionado("FEMENINO")}>Mujer</p>
+              <p onMouseEnter={() => setSexoSeleccionado("UNISEX_CHILD")}>Niño/a</p>
+              <p onMouseEnter={() => setSexoSeleccionado("UNISEX")}>Unisex</p>
+            </div>
+
+            {/* MegaMenu: se muestra cuando hay una selección de sexo */}
+            <div className={`${styles.megaMenu} ${sexoSeleccionado ? styles.megaMenuVisible : ""}`}>
+              {sexoSeleccionado && <MegaMenu sexo={sexoSeleccionado} />}
+            </div>
           </div>
 
           <div className={styles.navBarRight}>
@@ -102,6 +104,7 @@ export const NavBar = () => {
               <FaSearch className={styles.iconoNav} />
               <input type="text" placeholder="Buscar" />
             </div>
+
             <IoPersonSharp
               onClick={() => setShowLoginModal(true)}
               className={styles.iconoNav}
@@ -111,10 +114,21 @@ export const NavBar = () => {
               visible={showLoginModal}
               onClose={() => setShowLoginModal(false)}
             />
-            <FaCartShopping
-              className={styles.iconoNav}
-              onClick={() => setIsCartOpen(true)}
-            />
+            <div className={styles.cartIconWrapper}>
+              <FaCartShopping
+                className={styles.iconoNav}
+                onClick={() => setIsCartOpen(true)}
+              />
+              {cartQuantity > 0 && (
+                <span
+                  className={`${styles.cartBadge} ${animateBadge ? styles.cartBadgeAnimate : ""}`}
+                  onClick={() => setIsCartOpen(true)}
+                >
+                  {cartQuantity}
+                </span>
+              )}
+            </div>
+
 
           </div>
         </div>
@@ -144,15 +158,6 @@ export const NavBar = () => {
         <span onClick={handleNext}>&gt;</span>
       </div>
 
-      {/* MegaMenu: se muestra cuando hay una selección de sexo */}
-      {sexoSeleccionado && (
-        <div
-          onMouseEnter={() => { }}
-          onMouseLeave={() => setSexoSeleccionado(null)}
-        >
-          <MegaMenu sexo={sexoSeleccionado} />
-        </div>
-      )}
       <CartModal
         isOpen={isCartOpen}
         items={cartItems}

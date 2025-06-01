@@ -24,28 +24,6 @@ const sportsCategories = [
   { title: "Training", image: training },
   { title: "Ropa", image: ropa }
 ];
-// Lista de ejemplo para productos que aparecerán en el carousel
-const exampleList = [
-  {
-    image: zapatillasejemplo1,
-    // Ruta de la imagen del producto
-    title: "Nike Dunk Low",
-    description: "Zapatillas de moda para mujeres",
-    price: "$199.999"
-  },
-  {
-    image: zapatillasejemplo2, // Ruta de la imagen del producto
-    title: "Nike Air Force 1",
-    description: "Zapatillas de moda para hombres",
-    price: "$199.999"
-  },
-  {
-    image: zapatillasejemplo3, // Ruta de la imagen del producto
-    title: "Air Jordan 1",
-    description: "Zapatillas Jordan para hombres",
-    price: "$229.999"
-  }
-];
 
 export const Home = () => {
   const { productos, loading, error } = useProducto();
@@ -94,19 +72,6 @@ export const Home = () => {
             </div>
           )}
         />
-        <h2 style={{ paddingLeft: "1rem" }}>Descubrí lo nuevo</h2>
-        <Carousel
-          toList={exampleList}
-          renderItem={(product) => (
-            <div className={style.carouselCard}>
-              <img src={product.image} alt={product.title} />
-              <h3>{product.title}</h3>
-              <p>{product.description}</p>
-              <p>{product.price}</p>
-            </div>
-          )}
-        />
-
       </div>
       <div className={style.categoryCardsContainer}>
         {/* Hombre */}

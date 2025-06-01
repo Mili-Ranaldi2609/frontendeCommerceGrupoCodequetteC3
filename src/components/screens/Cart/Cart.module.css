@@ -36,7 +36,7 @@
   justify-content: space-between;
 }
 
-.payBtn, .continueShoppingBtn {
+.payBtn{
   padding: 10px;
   width: 45%;
   border: none;
@@ -44,16 +44,23 @@
 }
 
 .payBtn {
-  background-color: green;
+  background-color: #3E2723;
   color: white;
 }
 
 .continueShoppingBtn {
-  background-color: #ddd;
+  background-color: #3E2723;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+}
+.continueShoppingBtn:hover{
+  background-color: #6b4741;
 }
 
 .payBtn:hover {
-  background-color: darkgreen;
+  background-color: #6b4741;
 }
 
 .emptyCartPage {
@@ -68,12 +75,22 @@
 .categories button {
   margin: 5px;
   padding: 10px;
-  background-color: #4CAF50;
+  background-color: #3E2723;
   color: white;
   border: none;
   cursor: pointer;
 }
 
 .categories button:hover {
-  background-color: darkgreen;
+  background-color: #6b4741;
+}
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantityControls button {
+  padding: 4px 8px;
+  font-size: 16px;
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcmFuY28xMjQiLCJpYXQiOjE3NDgyNTk3NjMsImV4cCI6MjA2MzYxOTc2M30.pU-tKyb4ohhr7uEiHqysta06AFC4647XPde5605l28U"
+const token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcmFuY28xMjQiLCJpYXQiOjE3NDgzOTE5NzAsImV4cCI6MjA2Mzc1MTk3MH0.UfNMR5b-lr4dz9CHbvYasmu7gG5-KvD_ShIxUHMt9kI"
 // Base de axios sin autenticación básica
 export const api = axios.create({
   baseURL: "http://localhost:8080",
@@ -26,7 +26,6 @@ export const getProductoById = (id: number) => api.get(`/productos/${id}`);
 export const createProducto = (data: any) => api.post("/producto_detalle", data);
 export const updateProducto = (id: number, data: any) => api.put(`/producto_detalle/${id}`, data);
 export const deleteProducto = (id: number) => api.delete(`/producto_detalle/${id}`);
-
 export const getProductosFiltrados = (params: Record<string, string>) =>api.get("/productos/filtrar", { params });
 
 // =====================
