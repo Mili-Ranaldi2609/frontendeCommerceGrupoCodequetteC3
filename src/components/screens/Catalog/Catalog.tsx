@@ -63,9 +63,10 @@ const Catalogo = () => {
   };
 
   const productosFiltrados = useMemo(() => {
+
     return productos.filter((producto) => {
-      const cumpleColor = !filtros.color || producto.detalle.color === filtros.color;
-      const cumpleTalle = !filtros.talle || producto.detalle.talle?.includes(filtros.talle);
+      const cumpleColor = !filtros.color || producto.detalle?.some(d => d.color === filtros.color);
+      const cumpleTalle = !filtros.talle || producto.detalle?.some(d => d.talle === filtros.talle);
       const cumpleGenero = !filtros.genero || producto.sexo === filtros.genero;
       return cumpleColor && cumpleTalle && cumpleGenero;
     });

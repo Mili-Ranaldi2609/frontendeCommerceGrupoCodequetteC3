@@ -1,13 +1,11 @@
+import type { ICategoria } from "./ICategoria";
 import type { IDetalle } from "./IDetalle";
 
 export type Producto = {
   id: number;
-  denominacion: string;
-  precioOriginal: number;
-  precioFinal: number;
+  descripcion: string;
+  tipoProducto:string;
   sexo: 'MASCULINO' | 'FEMENINO' | 'UNISEX' | 'UNISEX_CHILD';
-  tienePromocion: boolean;
-  categorias: string[];
-  imagenes: string[];
-  detalle:IDetalle
+  categorias: ICategoria[];
+  detalle:IDetalle[]
 };

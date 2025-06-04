@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const AdminPage = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [categorias, setCategorias] = useState<string[]>([]);
+  const [categorias, setCategorias] = useState<any[]>([]); // Replace 'any' with 'ICategoria' if you have the type imported
   const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
   const [productoEditar, setProductoEditar] = useState<Producto | null>(null);
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const AdminPage = () => {
 
   const cargarCategorias = async () => {
     const res = await getCategorias();
-    setCategorias(res.data.map((cat: any) => cat.descripcion));
+    setCategorias(res.data); // Assuming res.data is ICategoria[]
   };
 
   const cargarProductos = async () => {
@@ -54,8 +54,9 @@ export const AdminPage = () => {
 
   const productosPorCategoria = productos.reduce((acc, prod) => {
     prod.categorias.forEach(cat => {
-      if (!acc[cat]) acc[cat] = [];
-      acc[cat].push(prod);
+      const catKey = typeof cat === 'string' ? cat : cat.descripcion;
+      if (!acc[catKey]) acc[catKey] = [];
+      acc[catKey].push(prod);
     });
     return acc;
   }, {} as Record<string, Producto[]>);
@@ -77,8 +78,12 @@ export const AdminPage = () => {
             {lista.map(prod => (
               <li key={prod.id} className={styles.productoItem}>
                 <div>
-                  <strong>{prod.denominacion}</strong>
-                  <p>{prod.detalle?.marca} - {prod.detalle?.color} - Talle: {prod.detalle?.talle}</p>
+                  <strong>{prod.descripcion}</strong>
+                  <p>
+                    {prod.detalle && prod.detalle.length > 0
+                      ? `${prod.detalle[0].marca} - ${prod.detalle[0].color} - Talle: ${prod.detalle[0].talle}`
+                      : 'Sin detalles'}
+                  </p>
                 </div>
                 <div className={styles.actions}>
                   <button onClick={() => setProductoEditar(prod)}>Editar</button>
@@ -102,17 +107,8 @@ export const AdminPage = () => {
           isOpen={!!productoEditar}
           onClose={() => setProductoEditar(null)}
           producto={productoEditar}
-          onEdit={async (id: number, data: FormData) => {
-            try {
-              const res = await updateProducto(id, data);
-              setProductos(prev =>
-                prev.map(p => (p.id === id ? res.data : p))
-              );
-              setProductoEditar(null);
-            } catch (err) {
-              console.error("Error actualizando producto", err);
-            }
-          }}
+          onEdit={updateProducto}
+          categorias={categorias}
         />
       )}
     </div>

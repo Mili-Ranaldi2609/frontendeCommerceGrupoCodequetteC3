@@ -46,8 +46,8 @@ export const deleteCategoria = (id: number) => api.delete(`/categorias/${id}`);
 // =====================
 export const getProductos = () => api.get("/productos");
 export const getProductoById = (id: number) => api.get(`/productos/${id}`);
-export const createProducto = (data: any) => api.post("/producto_detalle", data);
-export const updateProducto = (id: number, data: any) => api.put(`/producto_detalle/${id}`, data);
+export const createProducto = (data: any) => api.post("/productos", data);
+export const updateProducto = (id: number, data: any) => api.put(`/productos/${id}`, data);
 export const deleteProducto = (id: number) => api.delete(`/producto_detalle/${id}`);
 export const getProductosFiltrados = (params: Record<string, string>) => api.get("/productos/filtrar", { params });
 

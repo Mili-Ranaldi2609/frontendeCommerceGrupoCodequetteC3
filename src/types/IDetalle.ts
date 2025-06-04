@@ -6,5 +6,7 @@ export type IDetalle = {
   talle: IEnumTalle;
   marca: string;
   stock: number;
-  precio: number;
+  imagenes: string[];
+  precioCompra: number
+  precioVenta: number
 };
