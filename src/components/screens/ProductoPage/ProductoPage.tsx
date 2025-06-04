@@ -81,25 +81,25 @@ export const ProductoDetalle: FC = () => {
   }, [id, fetchProductoPorId]);
 
   useEffect(() => {
-    if (producto?.detalle?.[0]?.imagenes.length) {
-      setImagenSeleccionada(producto.detalle?.[0]?.imagenes[0]);
-    }
+    if (producto?.detalle && producto.detalle.length > 0 && producto.detalle[0]?.imagenes?.length) {
+  setImagenSeleccionada(producto.detalle[0].imagenes[0]);
+}
     // Una vez que el producto carga, si hay colores y talles disponibles, selecciona el primero por defecto
     if (producto?.detalle && producto.detalle.length > 0) {
-        if (coloresDisponibles.length > 0 && !colorSeleccionado) {
-            setColorSeleccionado(coloresDisponibles[0]);
-        }
-        // No selecciones talle aquí, el talle depende del color seleccionado
+      if (coloresDisponibles.length > 0 && !colorSeleccionado) {
+        setColorSeleccionado(coloresDisponibles[0]);
+      }
+      // No selecciones talle aquí, el talle depende del color seleccionado
     }
   }, [producto, coloresDisponibles, colorSeleccionado]); // Añade dependencias
 
   // Efecto para seleccionar el primer talle disponible cuando cambia el color seleccionado
   useEffect(() => {
-      if (tallesDisponiblesParaColor.length > 0) {
-          setTalleSeleccionado(tallesDisponiblesParaColor[0]);
-      } else {
-          setTalleSeleccionado(null); // Resetea el talle si no hay talles para el color
-      }
+    if (tallesDisponiblesParaColor.length > 0) {
+      setTalleSeleccionado(tallesDisponiblesParaColor[0]);
+    } else {
+      setTalleSeleccionado(null); // Resetea el talle si no hay talles para el color
+    }
   }, [tallesDisponiblesParaColor]);
 
 
@@ -118,15 +118,25 @@ export const ProductoDetalle: FC = () => {
           />
         )}
         <div className={styles.miniaturas}>
-          {producto.detalle?.[0].imagenes.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt={`Miniatura ${i}`}
-              className={`${styles.miniatura} ${imagenSeleccionada === img ? styles.seleccionada : ""}`}
-              onClick={() => setImagenSeleccionada(img)}
-            />
-          ))}
+          {/* Verificamos que 'detalle' exista y no esté vacío */}
+          {producto.detalle && producto.detalle.length > 0 &&
+            /* Ahora, específicamente verificamos que 'imagenes' exista en el primer detalle */
+            producto.detalle[0].imagenes &&
+            // Y luego, si existe, lo mapeamos
+            producto.detalle[0].imagenes.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`Miniatura ${i}`}
+                className={`${styles.miniatura} ${imagenSeleccionada === img ? styles.seleccionada : ""}`}
+                onClick={() => setImagenSeleccionada(img)}
+              />
+            ))}
+
+          {/* Mensaje opcional si no hay imágenes o no se han cargado */}
+          {(!producto.detalle || producto.detalle.length === 0 || !producto.detalle[0].imagenes) && (
+            <p>No hay miniaturas disponibles o están cargando...</p>
+          )}
         </div>
       </div>
 
