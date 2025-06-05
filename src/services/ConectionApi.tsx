@@ -44,7 +44,8 @@ export const deleteCategoria = (id: number) => api.delete(`/categorias/${id}`);
 // =====================
 // PRODUCTOS
 // =====================
-export const getProductos = () => api.get("/productos");
+export const getProductos = () => api.get("/productos/activos");
+export const getAllProductos = () => api.get("/productos");
 export const getProductoById = (id: number) => api.get(`/productos/${id}`);
 export const createProducto = (data: any) => api.post("/productos", data);
 export const updateProducto = (id: number, data: any) => api.put(`/productos/${id}`, data);
