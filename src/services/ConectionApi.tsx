@@ -49,9 +49,10 @@ export const getAllProductos = () => api.get("/productos");
 export const getProductoById = (id: number) => api.get(`/productos/${id}`);
 export const createProducto = (data: any) => api.post("/productos", data);
 export const updateProducto = (id: number, data: any) => api.put(`/productos/${id}`, data);
-export const deleteProducto = (id: number) => api.delete(`/producto_detalle/${id}`);
 export const getProductosFiltrados = (params: Record<string, string>) => api.get("/productos/filtrar", { params });
-
+export const filterProductos = (params: Record<string, any>) => {
+    return api.get("/productos/filtrar", { params });
+};
 // =====================
 // USUARIOS
 // =====================

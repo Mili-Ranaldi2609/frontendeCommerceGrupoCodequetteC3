@@ -28,11 +28,17 @@ export const ProductoCard: FC<Props> = ({ producto }) => {
       }
     }
   }
+  const imageUrl = (producto.detalle &&
+    producto.detalle.length > 0 &&
+    producto.detalle[0].imagenes &&
+    producto.detalle[0].imagenes.length > 0)
+    ? producto.detalle[0].imagenes[0]
+    : '';
 
   return (
     <div onClick={irADetalle} className={styles.card}>
       <img
-        src={producto.imagenes?.[0]}
+        src={imageUrl}
         alt={producto.descripcion}
         className={styles.imagen}
       />

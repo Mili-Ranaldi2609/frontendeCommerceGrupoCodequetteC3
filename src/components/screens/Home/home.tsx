@@ -45,14 +45,7 @@ export const Home = () => {
           {Array.isArray(productos) && productos.map((producto) => (
             <div key={producto.id} className={style.homeImageContainer}>
               <ProductoCard
-                producto={{
-                  id: producto.id,
-                  descripcion: producto.descripcion,
-                  imagenes: [producto.imagenes?.[0]],
-                  sexo: producto.sexo,
-                  categorias: producto.categorias,
-                  detalle: producto.detalle,
-                }}
+                producto={producto}
               />
             </div>
           ))}

@@ -5,11 +5,12 @@ import { FaCartShopping } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { MegaMenu } from "../../ui/MegaMenu/MegaMenu";
-import { Link } from "react-router-dom";
 import { LoginModal } from "../Login/Login";
 import { CartModal } from "../Cart/CartModal";
 import { useCartStore } from "../../../store/useCartStore";
-
+import { filterProductos } from '../../../services/ConectionApi';
+import type { Producto } from '../../../types/IProduct'; 
+import { Link, useNavigate } from "react-router-dom";
 export const NavBar = () => {
   interface CartItem {
     id: number;
@@ -35,6 +36,7 @@ export const NavBar = () => {
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const cartQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
   const [animateBadge, setAnimateBadge] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     if (cartQuantity > 0) {
       setAnimateBadge(true);
@@ -57,7 +59,7 @@ export const NavBar = () => {
 
     return () => clearInterval(intervalo);
   }, []);
-  // ✅ FUNCIONES PARA LAS FLECHAS
+
   const handleNext = () => {
     setFraseActual((prev) => (prev + 1) % frases.length);
   };
@@ -65,6 +67,18 @@ export const NavBar = () => {
   const handlePrev = () => {
     setFraseActual((prev) => (prev - 1 + frases.length) % frases.length);
   };
+   const handleSearch = () => {
+        const trimmedQuery = searchQuery.trim();
+        if (trimmedQuery === "") {
+            navigate('/'); // Si la búsqueda está vacía, simplemente ve a la página principal
+            return;
+        }
+        // Navega a la HomePage, pasando la consulta como un parámetro de URL
+        // Por ejemplo: /?search=Nike
+        navigate(`/?search=${encodeURIComponent(trimmedQuery)}`);
+        setSearchQuery(""); // Limpia el input de búsqueda
+    };
+
 
   return (
     <>
@@ -101,9 +115,21 @@ export const NavBar = () => {
 
           <div className={styles.navBarRight}>
             <div className={styles.searchBox}>
-              <FaSearch className={styles.iconoNav} />
-              <input type="text" placeholder="Buscar" />
-            </div>
+                            {/* ⭐ Input de búsqueda */}
+                            <input
+                                type="text"
+                                placeholder="Buscar"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={(e) => {
+                                    if (e.key === "Enter") {
+                                        handleSearch();
+                                    }
+                                }}
+                            />
+                            {/* ⭐ Icono de búsqueda */}
+                            <FaSearch className={styles.iconoNav} onClick={handleSearch} />
+                        </div>
 
             <IoPersonSharp
               onClick={() => setShowLoginModal(true)}
