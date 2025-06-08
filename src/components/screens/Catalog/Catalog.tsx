@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useProducto } from "../../../hooks/useProduct";
-import { ProductoCard } from "../../ProductCard/ProductCard";
+import { ProductoCard } from "../../ui/ProductCard/ProductCard";
 import styles from "./Catalog.module.css";
 import { IoFilter } from "react-icons/io5";
 import classNames from "classnames";
@@ -188,7 +188,7 @@ const Catalogo = () => {
             })}
           >
             {loading && <p className={styles.loading}>Cargando productos...</p>}
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <p className={styles.error}>{error.message}</p>}
             {!loading && !error && productosFiltrados.length === 0 && (
               <p className={styles.error}>No se encontraron productos.</p>
             )}

@@ -1,15 +1,212 @@
-.select_multiple {
+.addProductForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; 
   width: 100%;
-  height: 150px; /* o más si querés mostrar más filas */
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 2px solid #000;
-  border-radius: 12px;
-  background-color: #fff;
-  overflow-y: auto;
-  appearance: none;
 }
 
-.select_multiple option {
+.formColumns {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.generalInfoColumn,
+.detailsColumn {
+  flex: 1; 
+  min-width: 300px; 
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+}
+
+.generalInfoColumn h3,
+.detailsColumn h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Estilos para etiquetas e inputs generales */
+.addProductForm label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.addProductForm input,
+.addProductForm select,
+.addProductForm textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 5px;
+  width: calc(100% - 20px);
+  box-sizing: border-box;
+}
+
+.addProductForm select[multiple] {
+  min-height: 100px;
+  overflow-y: auto;
+}
+
+/* Estilos para cada grupo de detalle */
+.detalleGroup {
+  border: 1px dashed #a0a0a0;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  position: relative; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalleGroup h4 {
+  margin-top: 0;
+  color: #444;
+}
+
+/* Contenedor de imágenes por detalle */
+.imagenesDetalleContainer {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.imagenesDetalleContainer h6 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.imageInputRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.imageInputRow label {
+  flex-grow: 1; 
+  margin-bottom: 0;
+}
+
+.imageInputRow input {
+  width: 100%;
+}
+
+/* Botones específicos de añadir/eliminar */
+.addDetalleButton,
+.addDetalleButton,
+.addImageButton {
+  background-color: #3E2723; 
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+  align-self: flex-start; 
+}
+
+.addDetalleButton:hover,
+.addImageButton:hover {
+  background-color: #6b4139;
+}
+
+.removeDetalleButton,
+.removeImageButton {
+  background-color: #f44336; 
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+
+.removeDetalleButton:hover,
+.removeImageButton:hover {
+  background-color: #d32f2f;
+}
+
+.removeDetalleButton {
+  margin-top: 10px;
+  align-self: flex-end; 
+}
+
+
+/* Botones generales del formulario */
+.submitButton {
+  background-color: #3E2723;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem; 
+  cursor: pointer;
+  font-size: 1rem;
+  box-sizing: border-box; 
+}
+
+.submitButton:hover {
+  background-color: #6b4139; 
+}
+
+.submitButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Estilo para el select multiple */
+.selectMultiple {
+  width: 100%;
+  height: 150px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 2px solid #ccc; 
+  border-radius: 4px; 
+  background-color: #fff;
+  overflow-y: auto;
+  appearance: none; 
+}
+
+.selectMultiple option {
   padding: 0.25rem 0.5rem;
+}
+
+/* Mensajes de error */
+.errorMessage {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .formColumns {
+    flex-direction: column; 
+  }
+
+  .generalInfoColumn,
+  .detailsColumn {
+    min-width: unset; 
+    width: 100%;
+  }
 }

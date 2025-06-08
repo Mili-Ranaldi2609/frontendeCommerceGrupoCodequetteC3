@@ -5,8 +5,9 @@ export const PropositoModal = ({ show, onClose }: { show: boolean; onClose: () =
     <Modal
       show={show}
       title="Propósito"
-      content="Urban Vibes busca conectar a las personas con la moda urbana más auténtica y responsable."
       onClose={onClose}
-    />
+    >
+      <p>Urban Vibes busca conectar a las personas con la moda urbana más auténtica y responsable.</p>
+    </Modal>
   );
 };

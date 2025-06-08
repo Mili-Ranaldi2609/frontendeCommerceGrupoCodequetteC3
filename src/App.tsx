@@ -3,7 +3,7 @@ import { Home } from "./components/screens/Home/home";
 import { ProductoDetalle } from "./components/screens/ProductoPage/ProductoPage";
 import Catalogo from "./components/screens/Catalog/Catalog";
 import { Register } from "./components/screens/Login/Register";
-import Layout from "./components/Layout/Layout";
+import Layout from "./components/ui/Layout/Layout";
 import {AdminPage} from './components/screens/Admin/AdminPage';
 import { CartPage } from "./components/screens/Cart/Cart";
 import { UserProfile } from "./components/screens/UserProfile/UserProfile";

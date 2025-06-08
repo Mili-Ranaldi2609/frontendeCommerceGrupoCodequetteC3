@@ -1,13 +1,13 @@
 // Layout.tsx
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { NavBar } from "../screens/Navbar/NavBar";
-import { Footer } from "../screens/Footer/Footer";
-import { EnviosModal } from "../ui/Modals/ModalFooter/ModalEnvios";
-import { OpcionesPagoModal } from "../ui/Modals/ModalFooter/OpcionesPagoModal";
-import { ContactoModal } from "../ui/Modals/ModalFooter/ContactoModal";
-import { PropositoModal } from "../ui/Modals/ModalFooter/PropositoModal";
-import { PromocionesModal } from "../ui/Modals/ModalFooter/PromocionesModal";
+import { NavBar } from "../Navbar/NavBar";
+import { Footer } from "../Footer/Footer";
+import { EnviosModal } from "../Modals/ModalFooter/ModalEnvios";
+import { OpcionesPagoModal } from "../Modals/ModalFooter/OpcionesPagoModal";
+import { ContactoModal } from "../Modals/ModalFooter/ContactoModal";
+import { PropositoModal } from "../Modals/ModalFooter/PropositoModal";
+import { PromocionesModal } from "../Modals/ModalFooter/PromocionesModal";
 // Agregá más modales si querés
 
 const Layout = () => {

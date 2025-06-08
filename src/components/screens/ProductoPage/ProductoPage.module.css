@@ -1,80 +1,194 @@
+.productPageWrapper {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Lato", sans-serif;
+  color: #333; 
+}
+
 .detalle {
   display: flex;
-  gap: 30px;
-  padding: 20px;
+  flex-wrap: wrap; 
+  gap: 2rem;
+  padding: 2rem;
   justify-content: center; 
   align-items: flex-start; 
   width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
+/* --- Image Section --- */
 .imagenes {
   display: flex;
+  flex-direction: row; /* Thumbnails next to main image */
+  align-items: flex-start;
+  gap: 1rem;
+  flex-shrink: 0; /* Prevent shrinking if space is tight */
+  /* Added responsive adjustment */
+  width: calc(350px + 60px + 1rem); /* Main image + thumbnail width + gap */
+  max-width: 100%; /* Ensure it doesn't overflow */
+}
+
+.miniaturasContainer {
+  width: 60px;
+  height: 350px; 
+  overflow-y: auto; 
+  overflow-x: hidden;
+  user-select: none; 
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: grab; 
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+
+.miniaturasContainer::-webkit-scrollbar {
+  display: none; 
+}
+
+.miniaturasTrack {
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  max-width: 400px;
+  gap: 0.625rem;
 }
 
 .imagenPrincipal {
-  width: 100%;
-  max-width: 350px;
-  object-fit: contain;
+  width: 350px;
+  height: 350px;
+  object-fit: contain; /* Ensures the whole image is visible */
   border: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-
-.miniaturas {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  border-radius: 6px;
+  background-color: #f4f4f4;
 }
 
 .miniatura {
   width: 60px;
   height: 60px;
-  object-fit: cover;
+  object-fit: cover; /* Fills the container, crops if needed */
   border: 1px solid #ccc;
+  border-radius: 4px;
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.3s, border 0.3s;
+  opacity: 0.7; /* Slightly faded when not selected */
+  transition: opacity 0.3s, border 0.3s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.miniatura:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .miniatura.seleccionada {
   opacity: 1;
-  border: 2px solid #3E2723;
+  border: 2px solid #3e2723; /* Active color */
 }
 
+.noImagePlaceholder {
+  width: 350px;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  color: #777;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* --- Info Section --- */
 .info {
-  flex: 1;
-  padding: 10px;
-  max-width: 500px;
+  flex: 1; /* Takes available space */
+  padding: 1rem;
+  max-width: 500px; /* Max width for readability */
 }
 
-.precio {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 10px;
-}
-.opciones {
-  margin: 10px 0;
+.productTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #1a1a1a;
 }
 
-.opcion {
-  margin: 5px;
-  padding: 8px 16px;
-  background-color: #3E2723;
-  border: 1px solid #3E2723;
-  cursor: pointer;
-  transition: all 0.3s;
+.productDescription { /* If you decide to keep a separate description <p> */
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #555;
 }
 
-.opcion:hover {
-  background-color: #ddd;
+.stockInfo,
+.priceInfo,
+.categoryInfo {
+  font-size: 1.1rem;
+  margin-bottom: 0.7rem;
+  color: #444;
 }
 
-.opcion.activa {
-  background-color: #6b4139;
+.stockInfo strong,
+.priceInfo strong,
+.categoryInfo strong {
+  color: #222;
+}
+
+.pricePrompt {
+  font-style: italic;
+  color: #777;
+  margin-bottom: 1rem;
+}
+
+.noDetailMessage {
+  font-style: italic;
+  color: #777;
+  margin-bottom: 1rem;
+}
+
+.opcionesGroup {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.optionLabel {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.opcionesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.opcionBtn { /* Renamed from .opcion for clarity (button specific) */
+  padding: 0.6rem 1.2rem;
+  background-color: #3e2723;
   color: white;
+  border: 1px solid #3e2723;
+  border-radius: 8px; /* Slightly larger radius */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.opcionBtn:hover:not(:disabled) {
+  background-color: #5a403c;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.opcionBtn.activa {
+  background-color: #6b4139;
   border-color: #6b4139;
+  box-shadow: 0 0 0 2px rgba(107, 65, 57, 0.4); /* Subtle focus ring */
 }
 .addToCartButton {
   position: relative;
@@ -85,7 +199,9 @@
   border-radius: 5px;
   cursor: pointer;
 }
-
+.addToCartButton:hover {
+  background-color: #3E2723 ;
+}
 .cartItem {
   position: absolute;
   height: 24px;

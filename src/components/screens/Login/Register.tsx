@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Register.module.css";
 import { useNavigate } from "react-router-dom";
 import { registerUsuario } from "../../../services/ConectionApi";
+
+type FormData = {
+  nombre: string;
+  apellido: string;
+  username: string;
+  genero: string;
+  password: string;
+  confirmarPassword: string;
+};
 
 export const Register = () => {
   const navigate = useNavigate();
   const [passwordMatch, setPasswordMatch] = useState(true);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     nombre: "",
     apellido: "",
     username: "",
@@ -15,71 +24,60 @@ export const Register = () => {
     password: "",
     confirmarPassword: "",
   });
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  // Validar si las contraseñas coinciden cada vez que cambian
+  useEffect(() => {
+    setPasswordMatch(form.password === form.confirmarPassword);
+  }, [form.password, form.confirmarPassword]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    const newForm = { ...form, [name]: value };
-
-    // Si cambia alguna contraseña, actualizamos validación
-    if (name === "password" || name === "confirmarPassword") {
-      setPasswordMatch(newForm.password === newForm.confirmarPassword);
-    }
-
-    setForm(newForm);
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación de email
+    // Validación email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.username)) {
       alert("Por favor, ingresá un email válido.");
       return;
     }
 
-    // Validación de contraseña
+    // Validación contraseña
     if (form.password.length < 6) {
       alert("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
 
-    // Validación de coincidencia
-    if (form.password !== form.confirmarPassword) {
+    if (!passwordMatch) {
       alert("Las contraseñas no coinciden.");
       return;
     }
 
     try {
-      try {
-        await registerUsuario({
-          firstname: form.nombre,
-          lastname: form.apellido,
-          username: form.username,
-          email: form.username,
-          password: form.password,
-        });
+      await registerUsuario({
+        firstname: form.nombre,
+        lastname: form.apellido,
+        username: form.username,
+        email: form.username,
+        password: form.password,
+      });
 
-        alert("Registro exitoso. Ahora podés iniciar sesión.");
-        navigate("/login"); 
-      } catch (error: any) {
-        if (error.response?.status === 409) {
-          alert("Ya existe un usuario registrado con ese email.");
-        } else {
-          console.error("Error al registrar:", error);
-          alert("No se pudo registrar el usuario.");
-        }
-      }
-
+      alert("Registro exitoso. Ahora podés iniciar sesión.");
+      navigate("/login");
     } catch (error: any) {
       if (error.response?.status === 409) {
         alert("Ya existe un usuario registrado con ese email.");
       } else {
         console.error("Error al registrar:", error);
-        alert("No se pudo registrar el usuario.");
+        alert("No se pudo registrar el usuario. Intentá nuevamente.");
       }
     }
   };
-
 
   return (
     <div className={styles.container}>
@@ -89,20 +87,49 @@ export const Register = () => {
       <form onSubmit={handleSubmit} className={styles.formulario}>
         <div className={styles.grid}>
           <div>
-            <label>Nombre</label>
-            <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required />
+            <label htmlFor="nombre">Nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
-            <label>Apellido</label>
-            <input type="text" name="apellido" value={form.apellido} onChange={handleChange} required />
+            <label htmlFor="apellido">Apellido</label>
+            <input
+              id="apellido"
+              type="text"
+              name="apellido"
+              value={form.apellido}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
-            <label>Email</label>
-            <input type="email" name="username" value={form.username} onChange={handleChange} required />
+            <label htmlFor="username">Email</label>
+            <input
+              id="username"
+              type="email"
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
-            <label className={styles.labelGenero}>Género</label>
-            <select name="genero" value={form.genero} onChange={handleChange} required>
+            <label htmlFor="genero" className={styles.labelGenero}>
+              Género
+            </label>
+            <select
+              id="genero"
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              required
+            >
               <option value="">-Select-</option>
               <option value="Hombre">Hombre</option>
               <option value="Mujer">Mujer</option>
@@ -110,22 +137,58 @@ export const Register = () => {
             </select>
           </div>
           <div>
-            <label>Contraseña</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} required />
+            <label htmlFor="password">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
-            <label>Repetí tu contraseña</label>
-            <input type="password" name="confirmarPassword" value={form.confirmarPassword} onChange={handleChange} required />
+            <label htmlFor="confirmarPassword">Repetí tu contraseña</label>
+            <input
+              id="confirmarPassword"
+              type="password"
+              name="confirmarPassword"
+              value={form.confirmarPassword}
+              onChange={handleChange}
+              required
+            />
           </div>
-          {form.confirmarPassword && !passwordMatch && (
-            <p style={{ color: 'red', marginTop: '5px' }}>Las contraseñas no coinciden</p>
+          {!passwordMatch && form.confirmarPassword && (
+            <p style={{ color: "red", marginTop: "5px" }}>
+              Las contraseñas no coinciden
+            </p>
           )}
-
         </div>
-
 
         <button type="submit" className={styles.boton}>
           Enviar
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <div key={n} className={styles[`star-${n}`]}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 784.11 815.53"
+                style={{
+                  shapeRendering: "geometricPrecision",
+                  textRendering: "geometricPrecision",
+                  imageRendering: "auto",
+                  fillRule: "evenodd",
+                  clipRule: "evenodd",
+                }}
+              >
+                <g id="Layer_x0020_1">
+                  <path
+                    className={styles.fil0}
+                    d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                  />
+                </g>
+              </svg>
+            </div>
+          ))}
         </button>
       </form>
     </div>

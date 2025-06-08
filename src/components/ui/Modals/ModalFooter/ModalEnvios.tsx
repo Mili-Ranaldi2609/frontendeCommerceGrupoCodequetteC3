@@ -5,8 +5,9 @@ export const EnviosModal = ({ show, onClose }: { show: boolean; onClose: () => v
     <Modal
       show={show}
       title="Envíos y entregas"
-      content="Información sobre tiempos y métodos de entrega."
       onClose={onClose}
-    />
+    >
+      <p>Información sobre tiempos y métodos de entrega.</p>
+    </Modal>
   );
 };

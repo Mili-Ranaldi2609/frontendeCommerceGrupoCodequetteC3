@@ -5,8 +5,9 @@ export const OpcionesPagoModal = ({ show, onClose }: { show: boolean; onClose: (
     <Modal
       show={show}
       title="Opciones de pago"
-      content="Aceptamos tarjetas de crédito, débito y otros métodos de pago online"
       onClose={onClose}
-    />
+    >
+      <p>Aceptamos tarjetas de crédito, débito y otros métodos de pago online </p>
+    </Modal>
   );
 };
