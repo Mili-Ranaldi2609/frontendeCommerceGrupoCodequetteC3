@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import styles from "./Cart.module.css";
 import { useCartStore } from "../../../store/useCartStore";
 import { Link } from "react-router-dom";
@@ -10,9 +10,6 @@ interface CartItem {
   quantity: number;
 }
 
-interface CartPageProps {
-  items: CartItem[];
-}
 
 export const CartPage = () => {
   const { items, increaseQuantity, decreaseQuantity } = useCartStore();
@@ -32,9 +29,9 @@ export const CartPage = () => {
                 <div>{item.name}</div>
                 <div>${item.price}</div>
                 <div className={styles.quantityControls}>
-                  <button onClick={() => decreaseQuantity(item.id)}>-</button>
+                  <button onClick={() => decreaseQuantity(item.id, item.color, item.talle)}>-</button>
                   <span>{item.quantity}</span>
-                  <button onClick={() => increaseQuantity(item.id)}>+</button>
+                  <button onClick={() => increaseQuantity(item.id, item.color, item.talle)}>+</button>
                 </div>
                 <div>${getSubtotal(item)}</div>
               </div>

@@ -71,7 +71,8 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target as HTMLInputElement;
-
+        console.log(type);
+        
         if (name === 'active') {
             setFormData(prev => ({ ...prev, active: checked }));
             return;

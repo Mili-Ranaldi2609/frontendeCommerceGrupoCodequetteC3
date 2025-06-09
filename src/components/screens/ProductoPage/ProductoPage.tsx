@@ -3,18 +3,18 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Importar useNavigate
 import styles from "./ProductoPage.module.css";
 import { useProductoStore } from "../../../store/useProductoStore";
-import { useCartStore } from "../../../store/useCartStore"; // Importar useCartStore
+import { useCartStore } from "../../../store/useCartStore"; 
 import { Carousel } from "../../ui/Carousel/Carousel";
 import { ProductoCard } from "../../ui/ProductCard/ProductCard";
 import type { IEnumTalle } from "../../../types/IEnumTalle";
-import type { Producto } from '../../../types/IProduct'; // Asegúrate de que esta importación sea correcta y apunte a tus tipos globales
+import type { Producto } from '../../../types/IProduct'; 
 
 export const ProductoDetalle: FC = () => {
   const { id } = useParams<{ id: string }>();
-  // Obtén 'items' del useCartStore para poder verificar si el producto ya está
-  const { addToCart, items: cartItems, doesItemExist } = useCartStore(); // <- Aquí
-  const navigate = useNavigate(); // Para navegar al carrito
-
+  const { addToCart, items: cartItems, doesItemExist } = useCartStore(); 
+  const navigate = useNavigate(); 
+  console.log(cartItems);
+  
   const {
     productoSeleccionado: producto,
     fetchProductoPorId,
@@ -29,14 +29,13 @@ export const ProductoDetalle: FC = () => {
   const [talleSeleccionado, setTalleSeleccionado] = useState<IEnumTalle | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Producto[]>([]);
   const [animateFly, setAnimateFly] = useState(false);
-  const [showDuplicateMessage, setShowDuplicateMessage] = useState(false); // Nuevo estado para el mensaje
-
+  const [showDuplicateMessage, setShowDuplicateMessage] = useState(false); 
   const miniaturasRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startPos = useRef(0);
   const scrollTopStart = useRef(0);
 
-  // --- Efectos de Carga de Datos ---
+
 
   useEffect(() => {
     if (id) {

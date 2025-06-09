@@ -3,10 +3,9 @@ import { FaWhatsapp } from "react-icons/fa6";
 import styles from "./footer.module.css";
 import { FaFacebookSquare } from "react-icons/fa";
 import { IoLogoInstagram } from "react-icons/io5";
-import { LuMessageCircle } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
-// ✅ Props
+
 interface FooterProps {
   onEnviosClick: () => void;
   onPagosClick: () => void;
