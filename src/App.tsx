@@ -18,36 +18,36 @@ export const App = () => {
         <Route index element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />
         <Route path="producto/:id" element={<ProductoDetalle />} />
-         {/* RUTA DINÁMICA para /catalogo/mujer, /catalogo/hombre, etc. */}
+        {/* RUTA DINÁMICA para /catalogo/mujer, /catalogo/hombre, etc. */}
         <Route path="catalogo/:genero" element={<Catalogo />} />
         <Route path="catalogo" element={<Catalogo />} />
         <Route path="register" element={<Register />} />
         <Route path="cart" element={<CartPage />} />
-         <Route path="profile" element={
+
+        {/* Ruta para el perfil de usuario (accesible por cualquier usuario autenticado, incluyendo ADMINs) */}
+        <Route path="profile" element={
           <UserRoute>
             <UserProfile />
           </UserRoute>
         } />
-        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
 
-         <Route path="admin" element={
+        {/* Rutas de administración */}
+        <Route path="admin" element={
           <AdminRoute>
             <AdminPage />
           </AdminRoute>
         } />
-        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
-        
-         <Route path="admin/users" element={
+        <Route path="admin/users" element={
           <AdminRoute>
             <UsersTable />
           </AdminRoute>
         } />
+
+        {/* Catch-all route for 404 - Debe ir al final */}
         <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
-  
       </Route>
     </Routes>
   );
 };
 
 export default App;
-

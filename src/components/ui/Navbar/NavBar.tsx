@@ -82,11 +82,7 @@ export const NavBar = () => {
     };
     const handleUserIconClick = () => {
         if (isAuthenticated) {
-            if (userRole === 'ADMIN') { 
-                navigate('/admin');
-            } else {
-                navigate('/profile'); 
-            }
+            navigate('/profile'); 
         } else {
             setShowLoginModal(true);
         }
