@@ -9,6 +9,7 @@ import { CartPage } from "./components/screens/Cart/Cart";
 import { UserProfile } from "./components/screens/UserProfile/UserProfile";
 import { AdminRoute } from "./routes/AdminRoute";
 import { UserRoute } from "./routes/UserRoute";
+import { UsersTable } from "./components/screens/Admin/UsersTable";
 
 export const App = () => {
   return (
@@ -32,6 +33,13 @@ export const App = () => {
          <Route path="admin" element={
           <AdminRoute>
             <AdminPage />
+          </AdminRoute>
+        } />
+        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+        
+         <Route path="admin/users" element={
+          <AdminRoute>
+            <UsersTable />
           </AdminRoute>
         } />
         <Route path="*" element={<h1>404 - Página no encontrada</h1>} />

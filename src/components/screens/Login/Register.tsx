@@ -1,3 +1,5 @@
+// Register.tsx
+
 import { useState, useEffect } from "react";
 import styles from "./Register.module.css";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +8,7 @@ import { registerUsuario } from "../../../services/ConectionApi";
 type FormData = {
   nombre: string;
   apellido: string;
-  username: string;
+  username: string; // Esto es el email
   genero: string;
   password: string;
   confirmarPassword: string;
@@ -25,7 +27,6 @@ export const Register = () => {
     confirmarPassword: "",
   });
 
-  // Validar si las contraseñas coinciden cada vez que cambian
   useEffect(() => {
     setPasswordMatch(form.password === form.confirmarPassword);
   }, [form.password, form.confirmarPassword]);
@@ -40,14 +41,12 @@ export const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.username)) {
       alert("Por favor, ingresá un email válido.");
       return;
     }
 
-    // Validación contraseña
     if (form.password.length < 6) {
       alert("La contraseña debe tener al menos 6 caracteres.");
       return;
@@ -62,13 +61,15 @@ export const Register = () => {
       await registerUsuario({
         firstname: form.nombre,
         lastname: form.apellido,
-        username: form.username,
-        email: form.username,
+        username: form.username, // Se usa como username en el backend
+        email: form.username,     // También como email en el backend
         password: form.password,
       });
 
       alert("Registro exitoso. Ahora podés iniciar sesión.");
-      navigate("/login");
+      // ✨ CAMBIO AQUÍ: Navega a la página principal y pasa un estado
+      navigate("/", { state: { openLoginModal: true } }); // Pasa un objeto de estado
+
     } catch (error: any) {
       if (error.response?.status === 409) {
         alert("Ya existe un usuario registrado con ese email.");
@@ -86,6 +87,7 @@ export const Register = () => {
 
       <form onSubmit={handleSubmit} className={styles.formulario}>
         <div className={styles.grid}>
+          {/* ... Tus campos de formulario ... */}
           <div>
             <label htmlFor="nombre">Nombre</label>
             <input
@@ -112,7 +114,7 @@ export const Register = () => {
             <label htmlFor="username">Email</label>
             <input
               id="username"
-              type="email"
+              type="email" // Asegúrate de que sea type="email" para validación básica del navegador
               name="username"
               value={form.username}
               onChange={handleChange}
@@ -167,6 +169,7 @@ export const Register = () => {
 
         <button type="submit" className={styles.boton}>
           Enviar
+          {/* ... SVG de estrellas ... */}
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div key={n} className={styles[`star-${n}`]}>
               <svg

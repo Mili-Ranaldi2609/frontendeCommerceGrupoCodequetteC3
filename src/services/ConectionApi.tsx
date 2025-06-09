@@ -50,9 +50,7 @@ export const getProductoById = (id: number) => api.get(`/productos/${id}`);
 export const createProducto = (data: any) => api.post("/productos", data);
 export const updateProducto = (id: number, data: any) => api.put(`/productos/${id}`, data);
 export const getProductosFiltrados = (params: Record<string, string>) => api.get("/productos/filtrar", { params });
-export const filterProductos = (params: Record<string, any>) => {
-    return api.get("/productos/filtrar", { params });
-};
+
 // =====================
 // USUARIOS
 // =====================
@@ -70,8 +68,55 @@ export const loginUsuario = (username: string, password: string) => {
   return axios.post("http://localhost:8080/auth/login", { username, password });
 };
 
-export const getUsuarios = () => api.get("/usuarios");
 export const getUsuarioById = (id: number) => api.get(`/usuarios/${id}`);
-export const createUsuario = (data: any) => api.post("/usuarios", data);
-export const updateUsuario = (id: number, data: any) => api.put(`/usuarios/${id}`, data);
-export const deleteUsuario = (id: number) => api.delete(`/usuarios/${id}`);
+
+// =====================
+// GESTIÓN DE USUARIOS (Endpoints de ADMIN)
+// =====================
+
+// ✨ Nueva función para obtener todos los usuarios (para el panel de administración)
+export const getAllUsers = async () => {
+  // Endpoint del backend: GET /api/admin/users
+  const response = await api.get("/api/admin/users");
+  return response.data; // Retorna la lista de usuarios
+};
+
+// ✨ Nueva función para crear un usuario (desde el panel de administración)
+export const createNewUser = async (userData: {
+  firstname: string;
+  lastname: string;
+  username: string; // Email
+  password: string;
+  role?: string; // Opcional, si el admin puede asignar roles
+}) => {
+  // Endpoint del backend: POST /api/admin/users
+  const response = await api.post("/api/admin/users", userData);
+  return response.data; // Retorna el usuario creado
+};
+
+// ✨ Nueva función para actualizar un usuario
+export const updateExistingUser = async (id: number | string, userData: {
+  firstname?: string;
+  lastname?: string;
+  username?: string; // Email
+  password?: string;
+  role?: string;
+  active?: boolean; // Para activar/desactivar desde la misma función de update
+}) => {
+  // Endpoint del backend: PUT /api/admin/users/{id}
+  const response = await api.put(`/api/admin/users/${id}`, userData);
+  return response.data; // Retorna el usuario actualizado
+};
+
+// ✨ Nueva función para desactivar (soft delete) un usuario
+export const deactivateUser = async (id: number | string) => {
+  // Endpoint del backend: DELETE /api/admin/users/{id}
+  await api.delete(`/api/admin/users/${id}`);
+  // No retorna contenido, solo un 204 No Content
+};
+
+// ✨ Nueva función para activar un usuario (si lo necesitas)
+export const activateUser = async (id: number | string) => {
+  // Endpoint del backend: POST /api/admin/users/{id}/activate
+  await api.post(`/api/admin/users/${id}/activate`);
+};
