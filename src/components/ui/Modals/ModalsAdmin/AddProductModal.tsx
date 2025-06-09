@@ -4,26 +4,31 @@ import type { Producto } from '../../../../types/IProduct';
 import { IColor } from '../../../../types/IEnumColor';
 import { IEnumTalle } from '../../../../types/IEnumTalle';
 import type { ICategoria } from '../../../../types/ICategoria';
-import adminStyles from './AddProductModal.module.css'; // Renombrado a adminStyles
+import adminStyles from './AddProductModal.module.css'; 
+import { uploadImagen } from '../../../../services/ConectionApi';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   categorias: ICategoria[];
-  onSubmit: (nuevo: Omit<Producto, 'id'>) => Promise<void>;
+  onSubmit: (nuevo: Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal'>) => Promise<void>;
   onProductoCreado?: () => void;
 }
-
-type ProductoFormData = Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal' | 'imagenes'> & {
-  detalle: Array<{
-    color: IColor;
-    talle: IEnumTalle;
-    marca: string;
-    stock: number;
-    precioCompra: number;
-    precioVenta: number;
-    imagenes: string[];
-  }>;
+type DetalleFormData = {
+  id?: number; // Para edición
+  active?: boolean; // Para edición
+  color: IColor;
+  talle: IEnumTalle;
+  marca: string;
+  stock: number;
+  precioCompra: number;
+  precioVenta: number;
+  imagenes: (File | string)[]; 
+  loadingImage?: boolean; 
+  imageUploadError?: string | null; 
+};
+type ProductoFormData = Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal' | 'detalle'> & {
+  detalle: DetalleFormData[];
   tipoProducto: string;
 };
 
@@ -40,7 +45,9 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
         talle: IEnumTalle.S,
         precioCompra: 0,
         precioVenta: 0,
-        imagenes: [''],
+        imagenes: [],
+        loadingImage: false,
+        imageUploadError: null,
       },
     ],
     tipoProducto: '',
@@ -48,21 +55,80 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const { type, files } = e.target as HTMLInputElement;
 
     const detalleFieldMatch = name.match(/detalle\[(\d+)\]\.(\w+)/);
-    const imagenUrlMatch = name.match(/detalle\[(\d+)\]\.imagenes\[(\d+)\]/);
+    const imagenInputMatch = name.match(/detalle\[(\d+)\]\.imagenes\[(\d+)\]/);
 
-    if (imagenUrlMatch) {
-      const detalleIndex = parseInt(imagenUrlMatch[1]);
-      const imagenIndex = parseInt(imagenUrlMatch[2]);
+    if (type === 'file' && files && files.length > 0) {
+      const file = files[0];
+      if (!imagenInputMatch) return; 
+
+      const detalleIndex = parseInt(imagenInputMatch[1]);
+      const imageIndex = parseInt(imagenInputMatch[2]);
+
+      // Marcar el detalle como "cargando imagen"
+      setFormData(prev => {
+        const updatedDetalles = [...prev.detalle];
+        updatedDetalles[detalleIndex] = {
+          ...updatedDetalles[detalleIndex],
+          loadingImage: true,
+          imageUploadError: null,
+          imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
+            idx === imageIndex ? file : img // Temporalmente guardamos el File
+          ),
+        };
+        return { ...prev, detalle: updatedDetalles };
+      });
+
+      try {
+        const response = await uploadImagen(file); 
+        const imageUrl = response.data.url; 
+        setFormData(prev => {
+          const updatedDetalles = [...prev.detalle];
+          updatedDetalles[detalleIndex] = {
+            ...updatedDetalles[detalleIndex],
+            loadingImage: false,
+            imageUploadError: null,
+            imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
+              idx === imageIndex ? imageUrl : img // Reemplazar File con URL
+            ),
+          };
+          return { ...prev, detalle: updatedDetalles };
+        });
+      } catch (err: any) {
+        console.error('Error al subir imagen:', err);
+        // Manejar el error de subida de imagen
+        setFormData(prev => {
+          const updatedDetalles = [...prev.detalle];
+          updatedDetalles[detalleIndex] = {
+            ...updatedDetalles[detalleIndex],
+            loadingImage: false,
+            imageUploadError: 'Error al subir imagen: ' + (err.response?.data?.error || err.message || 'Desconocido'),
+            imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
+                idx === imageIndex ? '' : img 
+              ),
+          };
+          return { ...prev, detalle: updatedDetalles };
+        });
+      } finally {
+        if (e.target) {
+            e.target.value = '';
+        }
+      }
+      return; 
+    }
+
+    if (imagenInputMatch) {
+      const detalleIndex = parseInt(imagenInputMatch[1]);
+      const imagenIndex = parseInt(imagenInputMatch[2]);
 
       setFormData(prev => {
         const updatedDetalles = [...prev.detalle];
         const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
-        updatedImagenes[imagenIndex] = value;
+        updatedImagenes[imagenIndex] = value; // Aquí se guarda el string de la URL
 
         updatedDetalles[detalleIndex] = {
           ...updatedDetalles[detalleIndex],
@@ -104,8 +170,7 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
       }));
     }
   };
-
-  const handleAddDetalle = () => {
+    const handleAddDetalle = () => {
     setFormData(prev => ({
       ...prev,
       detalle: [
@@ -117,12 +182,13 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
           talle: IEnumTalle.S,
           precioCompra: 0,
           precioVenta: 0,
-          imagenes: [''],
+          imagenes: [],
+          loadingImage: false,
+          imageUploadError: null,
         },
       ],
     }));
   };
-
   const handleRemoveDetalle = (indexToRemove: number) => {
     setFormData(prev => ({
       ...prev,
@@ -133,36 +199,29 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
   const handleRemoveImagenFromDetalle = (detalleIndex: number, imagenIndex: number) => {
     setFormData(prev => {
       const updatedDetalles = [...prev.detalle];
-      const currentImages = updatedDetalles[detalleIndex].imagenes;
+      const currentImages = [...updatedDetalles[detalleIndex].imagenes];
 
       const updatedImagenes = currentImages.filter((_, idx) => idx !== imagenIndex);
 
       updatedDetalles[detalleIndex] = {
         ...updatedDetalles[detalleIndex],
-        imagenes: updatedImagenes.length > 0 ? updatedImagenes : [''],
+        imagenes: updatedImagenes,
       };
       return { ...prev, detalle: updatedDetalles };
     });
   };
-
   const handleAddImagenToDetalle = (detalleIndex: number) => {
     setFormData(prev => {
       const updatedDetalles = [...prev.detalle];
       const currentImages = updatedDetalles[detalleIndex].imagenes;
 
-      if (currentImages.length > 0 && currentImages[currentImages.length - 1].trim() === '') {
-        alert('Por favor, rellena el campo de imagen actual antes de añadir uno nuevo.');
-        return prev;
-      }
-
       updatedDetalles[detalleIndex] = {
         ...updatedDetalles[detalleIndex],
-        imagenes: [...currentImages, ''],
+        imagenes: [...currentImages, ''], 
       };
       return { ...prev, detalle: updatedDetalles };
     });
   };
-
   const resetForm = () => {
     setFormData({
       descripcion: '',
@@ -176,28 +235,33 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
           talle: IEnumTalle.S,
           precioCompra: 0,
           precioVenta: 0,
-          imagenes: [''],
+          imagenes: [],
+          loadingImage: false,
+          imageUploadError: null,
         },
       ],
       tipoProducto: '',
     });
     setError(null);
   };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); 
     setError(null);
 
     try {
-      const hasValidDetalle = formData.detalle.some(det =>
-        det.imagenes && det.imagenes.some(url => url.trim() !== '')
-      );
 
-      if (!hasValidDetalle) {
-        throw new Error('Debe agregar al menos un detalle con al menos una URL de imagen válida.');
+      const anyImageLoading = formData.detalle.some(det => det.loadingImage);
+      if (anyImageLoading) {
+        throw new Error('Por favor, espere a que todas las imágenes terminen de subir.');
+      }
+   
+      const anyImageUploadError = formData.detalle.some(det => det.imageUploadError);
+      if (anyImageUploadError) {
+        throw new Error('Hay errores en la subida de imágenes. Por favor, corríjalos.');
       }
 
+      // Prepara el ProductoDTO final para el backend
       const productoParaBackend: Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal'> = {
         descripcion: formData.descripcion,
         sexo: formData.sexo,
@@ -210,16 +274,17 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
           productos: undefined
         })),
         detalle: formData.detalle.map(det => ({
-          imagenes: det.imagenes.filter(url => url.trim() !== ''),
+          id: det.id,
           color: det.color,
           talle: det.talle,
           marca: det.marca,
           stock: det.stock,
           precioCompra: det.precioCompra,
           precioVenta: det.precioVenta,
+          imagenes: det.imagenes as string[], 
+          active: det.active
         })),
       };
-
       await onSubmit(productoParaBackend);
 
       resetForm();
@@ -234,7 +299,8 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
     }
   };
 
-  if (!isOpen) return null;
+
+  if (!isOpen) return null
 
   return (
     <Modal show={isOpen} onClose={onClose} title="Agregar Producto"
@@ -345,19 +411,32 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
                     required
                   />
                 </label>
-                <div className={adminStyles.imagenesDetalleContainer}>
-                  <h6>Imágenes del Detalle {idx + 1} (URLs):</h6>
-                  {Array.isArray(detalleItem.imagenes) && detalleItem.imagenes.map((imgUrl, imgIdx) => (
+                 <div className={adminStyles.imagenesDetalleContainer}>
+                  <h6>Imágenes del Detalle {idx + 1}:</h6>
+                  {detalleItem.imagenes.map((imgData, imgIdx) => (
                     <div key={`${idx}-${imgIdx}`} className={adminStyles.imageInputRow}>
                       <label>
-                        URL Imagen {imgIdx + 1}:
+                        Archivo de Imagen {imgIdx + 1}:
                         <input
+                          type="file"
                           name={`detalle[${idx}].imagenes[${imgIdx}]`}
-                          value={imgUrl || ''}
                           onChange={handleChange}
+                          accept="image/*"
+                          disabled={detalleItem.loadingImage} // Deshabilita mientras sube
                         />
+                        {detalleItem.loadingImage && (
+                          <p>Subiendo imagen...</p> // Indicador de carga por imagen
+                        )}
+                        {detalleItem.imageUploadError && (
+                          <p style={{ color: 'red' }}>{detalleItem.imageUploadError}</p> // Muestra error por imagen
+                        )}
+                        {imgData instanceof File && imgData.name ? (
+                          <p>{imgData.name}</p>
+                        ) : typeof imgData === 'string' && imgData.length > 0 ? (
+                          <img src={imgData} alt="Previsualización" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                        ) : null}
                       </label>
-                      {detalleItem.imagenes.length > 1 && (
+                      {(imgData instanceof File || (typeof imgData === 'string' && imgData.length > 0)) && (
                         <button type="button" onClick={() => handleRemoveImagenFromDetalle(idx, imgIdx)} className={adminStyles.removeImageButton}>
                           X
                         </button>
@@ -365,7 +444,7 @@ export const ModalAgregarProducto = ({ isOpen, onClose, categorias, onSubmit, on
                     </div>
                   ))}
                   <button type="button" onClick={() => handleAddImagenToDetalle(idx)} className={adminStyles.addImageButton}>
-                    + Añadir URL de Imagen
+                    + Añadir Campo de Imagen
                   </button>
                 </div>
                 {formData.detalle.length > 1 && (

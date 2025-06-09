@@ -50,7 +50,16 @@ export const getProductoById = (id: number) => api.get(`/productos/${id}`);
 export const createProducto = (data: any) => api.post("/productos", data);
 export const updateProducto = (id: number, data: any) => api.put(`/productos/${id}`, data);
 export const getProductosFiltrados = (params: Record<string, string>) => api.get("/productos/filtrar", { params });
+export const uploadImagen = (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file); 
 
+  return api.post("/productos/upload-image", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data' 
+    }
+  });
+};
 // =====================
 // USUARIOS
 // =====================
