@@ -1,7 +1,7 @@
 import type { FC } from "react";
-import type { Producto } from "../../types/IProduct";
 import { useNavigate } from "react-router-dom";
 import styles from "./ProductCard.module.css";
+import type { Producto } from "../../../types/IProduct";
 
 type Props = {
   producto: Producto;

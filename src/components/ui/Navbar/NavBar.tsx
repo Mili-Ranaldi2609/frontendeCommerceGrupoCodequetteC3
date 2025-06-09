@@ -1,5 +1,3 @@
-// NavBar.tsx
-
 import styles from "./navBar.module.css";
 import logo from "../../../assets/logo.png";
 import { IoPersonSharp } from "react-icons/io5";
@@ -9,19 +7,10 @@ import { useState, useEffect } from "react";
 import { MegaMenu } from "../MegaMenu/MegaMenu";
 import { CartModal } from "../../screens/Cart/CartModal";
 import { useCartStore } from "../../../store/useCartStore";
-// ✨ IMPORTA useLocation aquí
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../../../hooks/useAuth';
-import { LoginModal } from "../../screens/Login/Login"; // Asegúrate de que la ruta sea correcta aquí
-
+import { LoginModal } from "../../screens/Login/Login"; 
 export const NavBar = () => {
-    // Define CartItem interface si no está globalmente accesible
-    interface CartItem {
-        id: number;
-        name: string;
-        price: number;
-        quantity: number;
-    }
 
     const frases = [
         "Hasta 12 cuotas sin interés con bancos seleccionados",
@@ -30,20 +19,17 @@ export const NavBar = () => {
         "Descuentos exclusivos para socios",
     ];
 
-    const [hovered, setHovered] = useState<string | null>(null);
     const [sexoSeleccionado, setSexoSeleccionado] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [fraseActual, setFraseActual] = useState(0);
     const [animacion, setAnimacion] = useState("entrada");
-    const [showLoginModal, setShowLoginModal] = useState(false); // Estado para controlar la visibilidad del modal de login
+    const [showLoginModal, setShowLoginModal] = useState(false); 
     const [isCartOpen, setIsCartOpen] = useState(false);
 
     const items = useCartStore((state) => state.items);
-    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const cartQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
     const [animateBadge, setAnimateBadge] = useState(false);
     const navigate = useNavigate();
-    // ✨ Usa el hook useLocation aquí
     const location = useLocation();
 
     const { isAuthenticated, role: userRole } = useAuth();
@@ -51,38 +37,31 @@ export const NavBar = () => {
     useEffect(() => {
         if (cartQuantity > 0) {
             setAnimateBadge(true);
-            const timeout = setTimeout(() => setAnimateBadge(false), 300); // duración de la animación
+            const timeout = setTimeout(() => setAnimateBadge(false), 300); 
             return () => clearTimeout(timeout);
         }
     }, [cartQuantity]);
 
     useEffect(() => {
         const intervalo = setInterval(() => {
-            setAnimacion("salida"); // empieza animación de salida
+            setAnimacion("salida"); 
 
             setTimeout(() => {
-                // cambia la frase cuando termina la salida
+               
                 setFraseActual((prev) => (prev + 1) % frases.length);
-                setAnimacion("entrada"); // lanza entrada
-            }, 800); // duración de la salida
+                setAnimacion("entrada"); 
+            }, 800);
         }, 5000);
 
         return () => clearInterval(intervalo);
     }, []);
 
-    // ✨ NUEVO useEffect para manejar el estado de la navegación
     useEffect(() => {
-        // Comprueba si hay un estado de navegación y si openLoginModal es true
+      
         if (location.state && (location.state as any).openLoginModal) {
-            setShowLoginModal(true); // Esto abre el modal
-
-            // OPCIONAL: Limpia el estado para que el modal no se abra en futuras recargas o navegaciones.
-            // Si no quieres que el modal se abra cada vez que el usuario navegue o recargue la página
-            // (si el estado persiste en la URL), entonces descomenta la siguiente línea.
-            // navigate(location.pathname, { replace: true, state: {} });
+            setShowLoginModal(true); 
         }
-    }, [location.state, navigate, location.pathname]); // Dependencias: location.state (para detectar cambios), navigate (para limpiar el estado), location.pathname (para la URL actual)
-
+    }, [location.state, navigate, location.pathname]); 
 
     const handleNext = () => {
         setFraseActual((prev) => (prev + 1) % frases.length);
@@ -95,23 +74,21 @@ export const NavBar = () => {
     const handleSearch = () => {
         const trimmedQuery = searchQuery.trim();
         if (trimmedQuery === "") {
-            navigate('/'); // Si la búsqueda está vacía, simplemente ve a la página principal
+            navigate('/'); 
             return;
         }
         navigate(`/?search=${encodeURIComponent(trimmedQuery)}`);
-        setSearchQuery(""); // Limpia el input de búsqueda
+        setSearchQuery("");
     };
-
-    // Función para manejar el clic en el icono de persona
     const handleUserIconClick = () => {
         if (isAuthenticated) {
-            if (userRole === 'ADMIN') { // Asegúrate de que userRole esté bien definido y sea 'ADMIN'
+            if (userRole === 'ADMIN') { 
                 navigate('/admin');
             } else {
-                navigate('/profile'); // Redirige a la página de perfil del usuario
+                navigate('/profile'); 
             }
         } else {
-            setShowLoginModal(true); // Cambia el estado para mostrar el modal
+            setShowLoginModal(true);
         }
     };
 
@@ -137,7 +114,7 @@ export const NavBar = () => {
                         )}
                         {isAuthenticated && userRole === 'ADMIN' ? (
                             <Link to="/admin/users" className={styles.adminButton}>
-                                <p>Usuarios</p> {/* O "Productos", si prefieres */}
+                                <p>Usuarios</p>
                             </Link>
                         ) : (
                             <p>Ayuda</p>
@@ -155,7 +132,6 @@ export const NavBar = () => {
                             <p onMouseEnter={() => setSexoSeleccionado("UNISEX")}>Unisex</p>
                         </div>
 
-                        {/* MegaMenu: se muestra cuando hay una selección de sexo */}
                         <div className={`${styles.megaMenu} ${sexoSeleccionado ? styles.megaMenuVisible : ""}`}>
                             {sexoSeleccionado && <MegaMenu sexo={sexoSeleccionado} />}
                         </div>
@@ -182,7 +158,6 @@ export const NavBar = () => {
                             className={styles.iconoNav}
                         />
 
-                        {/* El LoginModal se renderiza condicionalmente basado en `showLoginModal` */}
                         <LoginModal
                             visible={showLoginModal}
                             onClose={() => setShowLoginModal(false)}
