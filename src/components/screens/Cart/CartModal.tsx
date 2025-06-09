@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BsCart3 } from "react-icons/bs";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCartStore } from "../../../store/useCartStore";
-import styles from "./cartModal.module.css";
+import styles from "./CartModal.module.css";
 
 interface CartItem {
     id: number;
