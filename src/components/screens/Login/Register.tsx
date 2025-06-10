@@ -1,5 +1,3 @@
-// Register.tsx
-
 import { useState, useEffect } from "react";
 import styles from "./Register.module.css";
 import { useNavigate } from "react-router-dom";
@@ -14,10 +12,18 @@ type FormData = {
   confirmarPassword: string;
 };
 
+type FormErrors = {
+  nombre?: string;
+  apellido?: string;
+  username?: string;
+  genero?: string;
+  password?: string;
+  confirmarPassword?: string;
+  general?: string; // For general form errors
+};
+
 export const Register = () => {
   const navigate = useNavigate();
-  const [passwordMatch, setPasswordMatch] = useState(true);
-
   const [form, setForm] = useState<FormData>({
     nombre: "",
     apellido: "",
@@ -27,8 +33,32 @@ export const Register = () => {
     confirmarPassword: "",
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Effect to validate password match in real-time
   useEffect(() => {
-    setPasswordMatch(form.password === form.confirmarPassword);
+    if (form.password && form.confirmarPassword) {
+      if (form.password !== form.confirmarPassword) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmarPassword: "Las contraseñas no coinciden.",
+        }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.confirmarPassword;
+          return newErrors;
+        });
+      }
+    } else {
+      // Clear error if one of the password fields is empty
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.confirmarPassword;
+        return newErrors;
+      });
+    }
   }, [form.password, form.confirmarPassword]);
 
   const handleChange = (
@@ -36,49 +66,97 @@ export const Register = () => {
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    // Clear the error for the current field as the user types
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof FormErrors];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = (formData: FormData) => {
+    const newErrors: FormErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.nombre.trim()) {
+      newErrors.nombre = "El nombre es obligatorio.";
+    }
+    if (!formData.apellido.trim()) {
+      newErrors.apellido = "El apellido es obligatorio.";
+    }
+    if (!formData.username.trim()) {
+      newErrors.username = "El email es obligatorio.";
+    } else if (!emailRegex.test(formData.username)) {
+      newErrors.username = "Por favor, ingresá un email válido.";
+    }
+    if (!formData.genero) {
+      newErrors.genero = "Debes seleccionar un género.";
+    }
+    if (!formData.password) {
+      newErrors.password = "La contraseña es obligatoria.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    }
+    if (!formData.confirmarPassword) {
+      newErrors.confirmarPassword = "Debes confirmar tu contraseña.";
+    } else if (formData.password !== formData.confirmarPassword) {
+      newErrors.confirmarPassword = "Las contraseñas no coinciden.";
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({}); // Clear previous errors
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.username)) {
-      alert("Por favor, ingresá un email válido.");
-      return;
-    }
+    const validationErrors = validateForm(form);
+    setErrors(validationErrors);
 
-    if (form.password.length < 6) {
-      alert("La contraseña debe tener al menos 6 caracteres.");
-      return;
-    }
-
-    if (!passwordMatch) {
-      alert("Las contraseñas no coinciden.");
-      return;
+    if (Object.keys(validationErrors).length > 0) {
+      setIsSubmitting(false);
+      return; // Stop submission if there are errors
     }
 
     try {
       await registerUsuario({
         firstname: form.nombre,
         lastname: form.apellido,
-        username: form.username, // Se usa como username en el backend
-        email: form.username,     // También como email en el backend
+        username: form.username,
+        email: form.username,
         password: form.password,
       });
 
       alert("Registro exitoso. Ahora podés iniciar sesión.");
-      // ✨ CAMBIO AQUÍ: Navega a la página principal y pasa un estado
-      navigate("/", { state: { openLoginModal: true } }); // Pasa un objeto de estado
-
+      navigate("/", { state: { openLoginModal: true } });
     } catch (error: any) {
+      setIsSubmitting(false);
       if (error.response?.status === 409) {
-        alert("Ya existe un usuario registrado con ese email.");
+        setErrors((prev) => ({
+          ...prev,
+          general: "Ya existe un usuario registrado con ese email.",
+        }));
       } else {
         console.error("Error al registrar:", error);
-        alert("No se pudo registrar el usuario. Intentá nuevamente.");
+        setErrors((prev) => ({
+          ...prev,
+          general: "No se pudo registrar el usuario. Intentá nuevamente.",
+        }));
       }
     }
   };
+
+  // Determine if the form is valid for submission (all fields meet basic criteria, passwords match)
+  const isFormValid = Object.keys(errors).length === 0 &&
+                      form.nombre.trim() !== "" &&
+                      form.apellido.trim() !== "" &&
+                      form.username.trim() !== "" &&
+                      form.genero !== "" &&
+                      form.password.length >= 6 &&
+                      form.password === form.confirmarPassword;
 
   return (
     <div className={styles.container}>
@@ -87,7 +165,6 @@ export const Register = () => {
 
       <form onSubmit={handleSubmit} className={styles.formulario}>
         <div className={styles.grid}>
-          {/* ... Tus campos de formulario ... */}
           <div>
             <label htmlFor="nombre">Nombre</label>
             <input
@@ -96,8 +173,12 @@ export const Register = () => {
               name="nombre"
               value={form.nombre}
               onChange={handleChange}
+              className={errors.nombre ? styles.inputError : ""}
               required
             />
+            {errors.nombre && (
+              <p className={styles.errorMessage}>{errors.nombre}</p>
+            )}
           </div>
           <div>
             <label htmlFor="apellido">Apellido</label>
@@ -107,19 +188,27 @@ export const Register = () => {
               name="apellido"
               value={form.apellido}
               onChange={handleChange}
+              className={errors.apellido ? styles.inputError : ""}
               required
             />
+            {errors.apellido && (
+              <p className={styles.errorMessage}>{errors.apellido}</p>
+            )}
           </div>
           <div>
             <label htmlFor="username">Email</label>
             <input
               id="username"
-              type="email" // Asegúrate de que sea type="email" para validación básica del navegador
+              type="email"
               name="username"
               value={form.username}
               onChange={handleChange}
+              className={errors.username ? styles.inputError : ""}
               required
             />
+            {errors.username && (
+              <p className={styles.errorMessage}>{errors.username}</p>
+            )}
           </div>
           <div>
             <label htmlFor="genero" className={styles.labelGenero}>
@@ -130,6 +219,7 @@ export const Register = () => {
               name="genero"
               value={form.genero}
               onChange={handleChange}
+              className={errors.genero ? styles.inputError : ""}
               required
             >
               <option value="">-Select-</option>
@@ -137,6 +227,9 @@ export const Register = () => {
               <option value="Mujer">Mujer</option>
               <option value="Otro">Otro</option>
             </select>
+            {errors.genero && (
+              <p className={styles.errorMessage}>{errors.genero}</p>
+            )}
           </div>
           <div>
             <label htmlFor="password">Contraseña</label>
@@ -146,8 +239,12 @@ export const Register = () => {
               name="password"
               value={form.password}
               onChange={handleChange}
+              className={errors.password ? styles.inputError : ""}
               required
             />
+            {errors.password && (
+              <p className={styles.errorMessage}>{errors.password}</p>
+            )}
           </div>
           <div>
             <label htmlFor="confirmarPassword">Repetí tu contraseña</label>
@@ -157,19 +254,22 @@ export const Register = () => {
               name="confirmarPassword"
               value={form.confirmarPassword}
               onChange={handleChange}
+              className={errors.confirmarPassword ? styles.inputError : ""}
               required
             />
+            {errors.confirmarPassword && (
+              <p className={styles.errorMessage}>{errors.confirmarPassword}</p>
+            )}
           </div>
-          {!passwordMatch && form.confirmarPassword && (
-            <p style={{ color: "red", marginTop: "5px" }}>
-              Las contraseñas no coinciden
+          {errors.general && (
+            <p className={styles.errorMessage} style={{ gridColumn: "1 / -1", textAlign: "center" }}>
+              {errors.general}
             </p>
           )}
         </div>
 
-        <button type="submit" className={styles.boton}>
-          Enviar
-          {/* ... SVG de estrellas ... */}
+        <button type="submit" className={styles.boton} disabled={isSubmitting || !isFormValid}>
+          {isSubmitting ? "Registrando..." : "Enviar"}
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div key={n} className={styles[`star-${n}`]}>
               <svg

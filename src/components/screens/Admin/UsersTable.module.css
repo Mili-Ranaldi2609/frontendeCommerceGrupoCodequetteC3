@@ -1,100 +1,122 @@
-/* src/components/screens/Admin/UsersTable.module.css */
-
 .container {
-  padding: 20px;
+  padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4e342e; /* marrón medio */
+  background-color: #ffffff; /* beige claro */
+  border-radius: 10px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .title {
   text-align: center;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
-  color: #555;
-}
-
-.error {
-  color: #d33;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #3e2723; /* marrón oscuro principal */
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(38, 14, 4, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
 }
 
-.table th, .table td {
-  padding: 12px 15px;
-  border: 1px solid #ddd;
+.table th,
+.table td {
+  padding: 16px 20px;
   text-align: left;
+  font-size: 1rem;
+  color: #3e2723;
 }
 
 .table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-  color: #333;
+  background-color: #6d4c41; /* marrón medio */
+  color: #fff;
+  font-weight: 700;
+  border-bottom: 2px solid #260e04; /* marrón muy oscuro */
 }
 
-.table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+.table tbody tr {
+  transition: background 0.3s ease-in-out;
+  cursor: default;
 }
 
 .table tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #d7ccc8; 
 }
 
-.editButton, .deactivateButton, .activateButton {
-  padding: 8px 12px;
+/* Botones */
+
+.editButton,
+.deactivateButton,
+.activateButton {
+  padding: 8px 14px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.9em;
-  margin-right: 5px;
   transition: background-color 0.3s ease;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .editButton {
-  background-color: #007bff;
-  color: white;
+  background-color: #3e2723;
+  margin-right: 1rem;
 }
 
 .editButton:hover {
-  background-color: #0056b3;
+  background-color: #260e04;
 }
 
 .deactivateButton {
-  background-color: #dc3545;
-  color: white;
+  background-color: #b00020; /* rojo oscuro */
 }
 
 .deactivateButton:hover {
-  background-color: #c82333;
+  background-color: #8b0015;
 }
 
 .activateButton {
-  background-color: #28a745;
-  color: white;
+  background-color: #388e3c; /* verde oscuro */
 }
 
 .activateButton:hover {
-  background-color: #218838;
+  background-color: #2e7d32;
 }
 
-/* Estilos del Modal */
+.createButton {
+  background-color: #6d4c41; /* marrón medio */
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(38, 14, 4, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.createButton:hover {
+  background-color: #260e04;
+}
+
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(62, 39, 35, 0.26);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -102,93 +124,88 @@
 }
 
 .modalContent {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 500px;
-}
-
-.modalContent h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 480px;
+  box-shadow: 0 10px 28px rgba(38, 14, 4, 0.3);
+  color: #3e2723;
+  font-weight: 600;
 }
 
 .formGroup {
-  margin-bottom: 15px;
+  margin-bottom: 1.4rem;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: #260e04;
 }
 
-.formGroup input[type="text"],
-.formGroup input[type="email"],
-.formGroup input[type="password"],
+.formGroup input,
 .formGroup select {
-  width: calc(100% - 22px); /* Ancho completo menos padding y borde */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1em;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1.5px solid #6d4c41;
+  transition: border-color 0.25s ease;
+  color: #3e2723;
+  background-color: #fff;
 }
 
-.formGroup input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.formGroup small {
-  display: block;
-  margin-top: 5px;
-  color: #777;
-  font-size: 0.8em;
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: #3e2723;
+  outline: none;
+  box-shadow: 0 0 6px #3e2723;
 }
 
 .modalActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
 }
 
-.saveButton, .cancelButton, .createButton {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+.saveButton,
+.cancelButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 1em;
   transition: background-color 0.3s ease;
+  border: none;
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(38, 14, 4, 0.25);
 }
 
 .saveButton {
-  background-color: #28a745;
-  color: white;
+  background-color: #6d4c41;
 }
 
 .saveButton:hover {
-  background-color: #218838;
+  background-color: #3e2723;
 }
 
 .cancelButton {
-  background-color: #6c757d;
-  color: white;
+  background-color: #6d4c41;
 }
 
 .cancelButton:hover {
-  background-color: #5a6268;
+  background-color: #3e2723;
 }
 
-.createButton {
-  background-color: #17a2b8;
-  color: white;
-  margin-bottom: 15px;
+.loading, .error {
+  text-align: center;
+  padding: 22px;
+  font-size: 1.3em;
+  color: #3e2723;
+  font-weight: 600;
 }
 
-.createButton:hover {
-  background-color: #138496;
+.error {
+  color: #b00020;
 }

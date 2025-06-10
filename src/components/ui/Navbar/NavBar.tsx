@@ -9,7 +9,7 @@ import { CartModal } from "../../screens/Cart/CartModal";
 import { useCartStore } from "../../../store/useCartStore";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../../../hooks/useAuth';
-import { LoginModal } from "../../screens/Login/Login"; 
+import { LoginModal } from "../../screens/Login/Login";
 export const NavBar = () => {
 
     const frases = [
@@ -23,8 +23,9 @@ export const NavBar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [fraseActual, setFraseActual] = useState(0);
     const [animacion, setAnimacion] = useState("entrada");
-    const [showLoginModal, setShowLoginModal] = useState(false); 
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const items = useCartStore((state) => state.items);
     const cartQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -37,19 +38,19 @@ export const NavBar = () => {
     useEffect(() => {
         if (cartQuantity > 0) {
             setAnimateBadge(true);
-            const timeout = setTimeout(() => setAnimateBadge(false), 300); 
+            const timeout = setTimeout(() => setAnimateBadge(false), 300);
             return () => clearTimeout(timeout);
         }
     }, [cartQuantity]);
 
     useEffect(() => {
         const intervalo = setInterval(() => {
-            setAnimacion("salida"); 
+            setAnimacion("salida");
 
             setTimeout(() => {
-               
+
                 setFraseActual((prev) => (prev + 1) % frases.length);
-                setAnimacion("entrada"); 
+                setAnimacion("entrada");
             }, 800);
         }, 5000);
 
@@ -57,11 +58,11 @@ export const NavBar = () => {
     }, []);
 
     useEffect(() => {
-      
+
         if (location.state && (location.state as any).openLoginModal) {
-            setShowLoginModal(true); 
+            setShowLoginModal(true);
         }
-    }, [location.state, navigate, location.pathname]); 
+    }, [location.state, navigate, location.pathname]);
 
     const handleNext = () => {
         setFraseActual((prev) => (prev + 1) % frases.length);
@@ -74,7 +75,7 @@ export const NavBar = () => {
     const handleSearch = () => {
         const trimmedQuery = searchQuery.trim();
         if (trimmedQuery === "") {
-            navigate('/'); 
+            navigate('/');
             return;
         }
         navigate(`/?search=${encodeURIComponent(trimmedQuery)}`);
@@ -82,7 +83,7 @@ export const NavBar = () => {
     };
     const handleUserIconClick = () => {
         if (isAuthenticated) {
-            navigate('/profile'); 
+            navigate('/profile');
         } else {
             setShowLoginModal(true);
         }
@@ -102,23 +103,52 @@ export const NavBar = () => {
                         </Link>
                         {/* Lógica del botón dinámico */}
                         {isAuthenticated && userRole === 'ADMIN' ? (
-                            <Link to="/admin" className={styles.adminButton}>
-                                <p>Panel</p> {/* O "Productos", si prefieres */}
-                            </Link>
+                            <div className={styles.hamburgerWrapper}>
+                                <label className={styles.hamburger}>
+                                    <input
+                                        type="checkbox"
+                                        checked={menuOpen}
+                                        onChange={() => setMenuOpen(!menuOpen)}
+                                    />
+                                    <svg viewBox="0 0 32 32">
+                                        <path className={`${styles.line} ${styles.lineTopBottom}`} d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                                        <path className={styles.line} d="M7 16 27 16"></path>
+                                    </svg>
+                                </label>
+                                {menuOpen && (
+                                    <div className={styles.dropdownMenu}>
+                                        <ul className={styles.list}>
+                                            <li className={styles.element}>
+                                                <Link to="/admin">
+                                                    <span>Panel</span>
+                                                </Link>
+                                            </li>
+                                            <li className={styles.element}>
+                                                <Link to="/admin/users">
+                                                    <span>Usuarios</span>
+                                                </Link>
+                                            </li>
+                                            <li className={styles.element}>
+                                                <Link to="/catalogo">
+                                                    <span>Catálogo</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )}
+
+                            </div>
+
                         ) : (
-                            <p>Suscribite</p>
-                        )}
-                        {isAuthenticated && userRole === 'ADMIN' ? (
-                            <Link to="/admin/users" className={styles.adminButton}>
-                                <p>Usuarios</p>
-                            </Link>
-                        ) : (
-                            <p>Ayuda</p>
+                            <div>
+                                <p>Suscribite</p>
+                                <p>Ayuda</p>
+                            </div>
                         )}
                     </div>
                     <div
                         className={styles.menuWrapper}
-                        onMouseEnter={() => {}}
+                        onMouseEnter={() => { }}
                         onMouseLeave={() => setSexoSeleccionado(null)}
                     >
                         <div className={styles.navBarCenter}>

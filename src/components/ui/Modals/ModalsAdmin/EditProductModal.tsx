@@ -4,10 +4,20 @@ import type { Producto } from '../../../../types/IProduct';
 import { IColor } from '../../../../types/IEnumColor';
 import type { ICategoria } from '../../../../types/ICategoria';
 import style from './EditProductModal.module.css';
-import { uploadImagen } from '../../../../services/ConectionApi'; 
+import { uploadImagen } from '../../../../services/ConectionApi';
 import type { AxiosResponse } from 'axios';
 import { IEnumTalle } from '../../../../types/IEnumTalle';
 
+
+// Definición de tipos actualizados
+type ImagenItem = {
+  url: string;
+  file: File | null;
+  preview: string;
+  loading: boolean;
+  error: string | null;
+  isNew?: boolean; // Para identificar imágenes recién añadidas
+};
 
 type DetalleFormData = {
   id?: number;
@@ -18,23 +28,27 @@ type DetalleFormData = {
   stock: number;
   precioCompra: number;
   precioVenta: number;
-  imagenes: (File | string)[]; 
-  loadingImage?: boolean; 
-  imageUploadError?: string | null; 
+  imagenes: ImagenItem[]; // Usamos el nuevo tipo ImagenItem
 };
 
 type ProductoFormData = Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal' | 'detalle'> & {
   detalle: DetalleFormData[];
 };
 
-// Definición de las Props del componente
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  producto: Producto; // El producto a editar
+  producto: Producto;
   categorias: ICategoria[];
   onEdit: (productoId: number, productoActualizado: Omit<Producto, 'id' | 'precioOriginal' | 'precioFinal'>) => Promise<AxiosResponse<any, any>>;
-  onProductoEditado?: () => void; 
+  onProductoEditado?: () => void;
+}
+
+// Enum para controlar la opción de subida (File o URL)
+enum ImageUploadOption {
+  FILE = 'file',
+  URL = 'url',
+  NONE = 'none' // Opción inicial o cuando no hay nada seleccionado
 }
 
 export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onEdit, onProductoEditado }: Props) => {
@@ -47,8 +61,10 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
     active: true,
   });
 
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState<string | null>(null); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [uploadOption, setUploadOption] = useState<Map<number, ImageUploadOption>>(new Map());
 
   useEffect(() => {
     if (isOpen && producto) {
@@ -66,12 +82,22 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
           stock: det.stock || 0,
           precioCompra: det.precioCompra || 0,
           precioVenta: det.precioVenta || 0,
-          imagenes: det.imagenes && det.imagenes.length > 0 ? det.imagenes : [],
+          imagenes: det.imagenes.map(imgUrl => ({
+            url: imgUrl,
+            file: null,
+            preview: imgUrl,
+            loading: false,
+            error: null,
+          })),
           active: det.active !== undefined ? det.active : true,
-          loadingImage: false, 
-          imageUploadError: null, 
         })),
       });
+      const initialUploadOptions = new Map<number, ImageUploadOption>();
+      producto.detalle.forEach((det, idx) => {
+        initialUploadOptions.set(idx, ImageUploadOption.NONE);
+      });
+      setUploadOption(initialUploadOptions);
+
     } else if (!isOpen) {
       setFormData({
         descripcion: '',
@@ -82,138 +108,56 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
         active: true,
       });
       setError(null);
+      setUploadOption(new Map());
     }
   }, [isOpen, producto]);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, checked } = e.target;
-    const { type, files } = e.target as HTMLInputElement; 
+
+  // Refactorización de handleChange
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target; // No desestructuramos 'checked' aquí
+
+    // Handle 'active' checkbox specifically
     if (name === 'active') {
-      setFormData(prev => ({ ...prev, active: checked }));
+      const target = e.target as HTMLInputElement; // Type assertion for checkbox
+      setFormData(prev => ({ ...prev, active: target.checked }));
       return;
     }
 
-  
+    // Handle 'detalle' fields
     if (name.startsWith('detalle[')) {
-      const imagenInputMatch = name.match(/detalle\[(\d+)\]\.imagenes\[(\d+)\]/);
-      const activeCheckboxMatch = name.match(/detalle\[(\d+)\]\.active/);
+      const match = name.match(/detalle\[(\d+)\]\.(\w+)/);
+      if (match) {
+        const index = parseInt(match[1]);
+        const field = match[2];
+        let fieldValue: any = value;
 
-    
-      if (type === 'file' && files && files.length > 0) {
-        const file = files[0];
-        if (!imagenInputMatch) return; 
-
-        const detalleIndex = parseInt(imagenInputMatch[1]);
-        const imageIndex = parseInt(imagenInputMatch[2]);
+        if (field === 'stock' || field === 'precioCompra' || field === 'precioVenta') {
+          fieldValue = parseFloat(value);
+          if (isNaN(fieldValue)) fieldValue = 0;
+        } else if (field === 'active') { // Handle active checkbox within detalle
+          const target = e.target as HTMLInputElement; // Type assertion for checkbox
+          fieldValue = target.checked;
+        }
 
         setFormData(prev => {
           const updatedDetalles = [...prev.detalle];
-          updatedDetalles[detalleIndex] = {
-            ...updatedDetalles[detalleIndex],
-            loadingImage: true,
-            imageUploadError: null,
-            imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
-              idx === imageIndex ? file : img 
-            ),
+          updatedDetalles[index] = {
+            ...updatedDetalles[index],
+            [field]: fieldValue,
           };
           return { ...prev, detalle: updatedDetalles };
         });
-
-        try {
-          const response = await uploadImagen(file);
-          const imageUrl = response.data.url; 
-          setFormData(prev => {
-            const updatedDetalles = [...prev.detalle];
-            updatedDetalles[detalleIndex] = {
-              ...updatedDetalles[detalleIndex],
-              loadingImage: false,
-              imageUploadError: null,
-              imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
-                idx === imageIndex ? imageUrl : img 
-              ),
-            };
-            return { ...prev, detalle: updatedDetalles };
-          });
-        } catch (err: any) {
-          console.error('Error al subir imagen:', err);
-          setFormData(prev => {
-            const updatedDetalles = [...prev.detalle];
-            updatedDetalles[detalleIndex] = {
-              ...updatedDetalles[detalleIndex],
-              loadingImage: false,
-              imageUploadError: 'Error al subir imagen: ' + (err.response?.data?.error || err.message || 'Desconocido'),
-              imagenes: prev.detalle[detalleIndex].imagenes.map((img, idx) =>
-                  idx === imageIndex ? '' : img
-                ),
-            };
-            return { ...prev, detalle: updatedDetalles };
-          });
-        } finally {
-          if (e.target) {
-              e.target.value = '';
-          }
-        }
-        return; 
-      }
-
-      if (activeCheckboxMatch) {
-        const detalleIndex = parseInt(activeCheckboxMatch[1]);
-        setFormData(prev => {
-          const updatedDetalles = [...prev.detalle];
-          updatedDetalles[detalleIndex] = {
-            ...updatedDetalles[detalleIndex],
-            active: checked,
-          };
-          return { ...prev, detalle: updatedDetalles };
-        });
-      }
-  
-      else if (imagenInputMatch) {
-          
-          const detalleIndex = parseInt(imagenInputMatch[1]);
-          const imagenIndex = parseInt(imagenInputMatch[2]);
-
-          setFormData(prev => {
-              const updatedDetalles = [...prev.detalle];
-              const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
-              updatedImagenes[imagenIndex] = value;
-
-              updatedDetalles[detalleIndex] = {
-                  ...updatedDetalles[detalleIndex],
-                  imagenes: updatedImagenes,
-              };
-              return { ...prev, detalle: updatedDetalles };
-          });
-      }
-      else {
-        const match = name.match(/detalle\[(\d+)\]\.(\w+)/);
-        if (match) {
-          const index = parseInt(match[1]);
-          const field = match[2];
-          let fieldValue: any = value;
-
-          if (field === 'stock' || field === 'precioCompra' || field === 'precioVenta') {
-            fieldValue = parseFloat(value);
-            if (isNaN(fieldValue)) fieldValue = 0;
-          }
-
-          setFormData(prev => {
-            const updatedDetalles = [...prev.detalle];
-            updatedDetalles[index] = {
-              ...updatedDetalles[index],
-              [field]: fieldValue,
-            };
-            return { ...prev, detalle: updatedDetalles };
-          });
-        }
       }
     }
+    // Handle 'categorias' multiple select
     else if (name === 'categorias') {
-      const select = e.target as HTMLSelectElement;
+      const select = e.target as HTMLSelectElement; // Type assertion for select
       const selectedIds = Array.from(select.selectedOptions).map(opt => Number(opt.value));
       const selectedCategorias = categorias.filter(cat => selectedIds.includes(cat.id!));
       setFormData(prev => ({ ...prev, categorias: selectedCategorias }));
     }
+    // Handle other product fields
     else {
       let productFieldValue: any = value;
       if (name === 'sexo') {
@@ -224,6 +168,96 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
         [name]: productFieldValue,
       }));
     }
+  };
+
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, detalleIndex: number, imagenIndex: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const previewUrl = URL.createObjectURL(file);
+
+    setFormData(prev => {
+      const updatedDetalles = [...prev.detalle];
+      const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
+      updatedImagenes[imagenIndex] = {
+        url: '',
+        file: file,
+        preview: previewUrl,
+        loading: true,
+        error: null,
+      };
+      updatedDetalles[detalleIndex] = { ...updatedDetalles[detalleIndex], imagenes: updatedImagenes };
+      return { ...prev, detalle: updatedDetalles };
+    });
+
+    try {
+      const response = await uploadImagen(file);
+      const imageUrl = response.data.url;
+
+      setFormData(prev => {
+        const updatedDetalles = [...prev.detalle];
+        const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
+        updatedImagenes[imagenIndex] = {
+          ...updatedImagenes[imagenIndex],
+          url: imageUrl,
+          loading: false,
+          error: null,
+        };
+        updatedDetalles[detalleIndex] = { ...updatedDetalles[detalleIndex], imagenes: updatedImagenes };
+        return { ...prev, detalle: updatedDetalles };
+      });
+    } catch (err: any) {
+      console.error('Error al subir imagen:', err);
+      setFormData(prev => {
+        const updatedDetalles = [...prev.detalle];
+        const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
+        updatedImagenes[imagenIndex] = {
+          ...updatedImagenes[imagenIndex],
+          loading: false,
+          error: 'Error al subir imagen: ' + (err.response?.data?.error || err.message || 'Desconocido'),
+          url: '',
+          preview: '',
+          file: null,
+        };
+        updatedDetalles[detalleIndex] = { ...updatedDetalles[detalleIndex], imagenes: updatedImagenes };
+        return { ...prev, detalle: updatedDetalles };
+      });
+    } finally {
+      if (e.target) {
+        e.target.value = '';
+      }
+    }
+  };
+
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>, detalleIndex: number, imagenIndex: number) => {
+    const url = e.target.value;
+    setFormData(prev => {
+      const updatedDetalles = [...prev.detalle];
+      const updatedImagenes = [...updatedDetalles[detalleIndex].imagenes];
+      updatedImagenes[imagenIndex] = {
+        ...updatedImagenes[imagenIndex],
+        url: url,
+        file: null,
+        preview: url,
+        loading: false,
+        error: null,
+      };
+      updatedDetalles[detalleIndex] = { ...updatedDetalles[detalleIndex], imagenes: updatedImagenes };
+      return { ...prev, detalle: updatedDetalles };
+    });
+  };
+
+  const handleRemoveImagenFromDetalle = (detalleIndex: number, imagenIndex: number) => {
+    setFormData(prev => {
+      const updatedDetalles = [...prev.detalle];
+      const updatedImagenes = updatedDetalles[detalleIndex].imagenes.filter((_, idx) => idx !== imagenIndex);
+      updatedDetalles[detalleIndex] = {
+        ...updatedDetalles[detalleIndex],
+        imagenes: updatedImagenes.length > 0 ? updatedImagenes : [],
+      };
+      return { ...prev, detalle: updatedDetalles };
+    });
   };
 
   const handleAddDetalle = () => {
@@ -238,13 +272,12 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
           talle: IEnumTalle.S,
           precioCompra: 0,
           precioVenta: 0,
-          imagenes: [], 
+          imagenes: [],
           active: true,
-          loadingImage: false,
-          imageUploadError: null,
         },
       ],
     }));
+    setUploadOption(prev => new Map(prev).set(formData.detalle.length, ImageUploadOption.NONE));
   };
 
   const handleRemoveDetalle = (indexToRemove: number) => {
@@ -252,51 +285,47 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
       const updatedDetalles = prev.detalle.filter((_, idx) => idx !== indexToRemove);
       return { ...prev, detalle: updatedDetalles };
     });
+    setUploadOption(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(indexToRemove);
+      return newMap;
+    });
   };
 
   const handleAddImagenToDetalle = (detalleIndex: number) => {
     setFormData(prev => {
       const updatedDetalles = [...prev.detalle];
-
-      if (updatedDetalles[detalleIndex].imagenes.length > 0 &&
-          typeof updatedDetalles[detalleIndex].imagenes[updatedDetalles[detalleIndex].imagenes.length - 1] === 'string' &&
-          (updatedDetalles[detalleIndex].imagenes[updatedDetalles[detalleIndex].imagenes.length - 1] as string).trim() === '') {
-
-            return prev;
-          }
-
       updatedDetalles[detalleIndex] = {
         ...updatedDetalles[detalleIndex],
-        imagenes: [...updatedDetalles[detalleIndex].imagenes, ''], 
+        imagenes: [
+          ...updatedDetalles[detalleIndex].imagenes,
+          { url: '', file: null, preview: '', loading: false, error: null, isNew: true },
+        ],
       };
       return { ...prev, detalle: updatedDetalles };
     });
   };
 
-  const handleRemoveImagenFromDetalle = (detalleIndex: number, imagenIndex: number) => {
-    setFormData(prev => {
-      const updatedDetalles = [...prev.detalle];
-      const updatedImagenes = updatedDetalles[detalleIndex].imagenes.filter((_, idx) => idx !== imagenIndex);
-      updatedDetalles[detalleIndex] = {
-        ...updatedDetalles[detalleIndex],
-        imagenes: updatedImagenes.length > 0 ? updatedImagenes : [], 
-      };
-      return { ...prev, detalle: updatedDetalles };
+  const handleToggleImageUploadOption = (detalleIndex: number, option: ImageUploadOption) => {
+    setUploadOption(prev => {
+      const newMap = new Map(prev);
+      newMap.set(detalleIndex, option);
+      return newMap;
     });
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
     setError(null);
 
     try {
-    
-      const anyImageLoading = formData.detalle.some(det => det.loadingImage);
+      const anyImageLoading = formData.detalle.some(det => det.imagenes.some(img => img.loading));
       if (anyImageLoading) {
         throw new Error('Por favor, espere a que todas las imágenes terminen de subir.');
       }
-      const anyImageUploadError = formData.detalle.some(det => det.imageUploadError);
+      const anyImageUploadError = formData.detalle.some(det => det.imagenes.some(img => img.error));
       if (anyImageUploadError) {
         throw new Error('Hay errores en la subida de imágenes. Por favor, corríjalos.');
       }
@@ -308,24 +337,25 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
         categorias: formData.categorias.map(cat => ({
           id: cat.id,
           descripcion: cat.descripcion,
-          categoriaPadre: undefined, 
+          categoriaPadre: undefined,
           subcategorias: undefined,
           productos: undefined,
         })),
         detalle: formData.detalle.map(det => ({
-          id: det.id, 
+          id: det.id,
           color: det.color,
           talle: det.talle,
           marca: det.marca,
           stock: det.stock,
           precioCompra: det.precioCompra,
           precioVenta: det.precioVenta,
-          imagenes: det.imagenes.filter(img => typeof img === 'string' && img.trim() !== '') as string[], 
+          imagenes: det.imagenes.filter(img => img.url.trim() !== '').map(img => img.url),
           active: det.active
         })),
         active: formData.active
       };
-      await onEdit(producto.id!, productoParaBackend); 
+
+      await onEdit(producto.id!, productoParaBackend);
       onClose();
       if (onProductoEditado) onProductoEditado();
       alert('Producto editado correctamente');
@@ -342,8 +372,8 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
   return (
     <Modal show={isOpen} onClose={onClose} title="Editar Producto">
       <form onSubmit={handleSubmit} className={style.form}>
-        <div className={style.formContent}> 
-          <div className={style.generalInfo}> {/* Columna de información general */}
+        <div className={style.formContent}>
+          <div className={style.generalInfo}>
             <h3>Información General del Producto</h3>
             <label>
               Descripción:
@@ -393,10 +423,10 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
             </label>
           </div>
 
-          <div className={style.productDetails}> {/* Columna de detalles del producto */}
+          <div className={style.productDetails}>
             <h3>Detalles del Producto</h3>
             {formData.detalle.map((detalleItem, idx) => (
-              <div key={detalleItem.id || `new-${idx}`} className={style.detalleItem}> 
+              <div key={detalleItem.id || `new-${idx}`} className={style.detalleItem}>
                 {detalleItem.id && <input type="hidden" name={`detalle[${idx}].id`} value={detalleItem.id} />}
 
                 <label>
@@ -469,38 +499,97 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
 
                 <div className={style.imagenesDetalleContainer}>
                   <h6>Imágenes del Detalle {idx + 1}:</h6>
-                  {detalleItem.imagenes.map((imgData, imgIdx) => (
+                  {detalleItem.imagenes.map((imgItem, imgIdx) => (
                     <div key={`${idx}-${imgIdx}`} className={style.image_input_row}>
-                      <label>
-                        Archivo de Imagen {imgIdx + 1}:
-                        <input
-                          type="file"
-                          name={`detalle[${idx}].imagenes[${imgIdx}]`}
-                          onChange={handleChange}
-                          accept="image/*" 
-                          disabled={detalleItem.loadingImage}
-                        />
-                        {detalleItem.loadingImage && (
-                          <p>Subiendo imagen...</p>
-                        )}
-                        {detalleItem.imageUploadError && (
-                          <p style={{ color: 'red' }}>{detalleItem.imageUploadError}</p>
-                        )}
-                        {imgData instanceof File && imgData.name ? (
-                          <p>{imgData.name}</p>
-                        ) : typeof imgData === 'string' && imgData.length > 0 ? (
-                          <img src={imgData} alt="Previsualización" style={{ maxWidth: '100px', maxHeight: '100px', objectFit: 'contain' }} />
-                        ) : null}
-                      </label>
-                      {(imgData instanceof File || (typeof imgData === 'string' && imgData.length > 0)) && (
-                        <button type="button" onClick={() => handleRemoveImagenFromDetalle(idx, imgIdx)} className={style.smallButton}>
-                          Eliminar
+                      {/* Botones para seleccionar la opción de subida */}
+                      <div className={style.uploadOptionButtons}>
+                        <button
+                          type="button"
+                          className={`${style.uploadOptionButton} ${uploadOption.get(idx) === ImageUploadOption.FILE ? style.activeOption : ''}`}
+                          onClick={() => handleToggleImageUploadOption(idx, ImageUploadOption.FILE)}
+                          disabled={imgItem.loading}
+                        >
+                          Subir desde Archivo
+                        </button>
+                        <button
+                          type="button"
+                          className={`${style.uploadOptionButton} ${uploadOption.get(idx) === ImageUploadOption.URL ? style.activeOption : ''}`}
+                          onClick={() => handleToggleImageUploadOption(idx, ImageUploadOption.URL)}
+                          disabled={imgItem.loading}
+                        >
+                          Pegar URL
+                        </button>
+                        {/* Opcional: Botón para limpiar la selección de opción y dejar solo la previsualización */}
+                         {(imgItem.file || imgItem.url) && uploadOption.get(idx) !== ImageUploadOption.NONE && (
+                            <button
+                                type="button"
+                                className={style.uploadOptionButton}
+                                onClick={() => handleToggleImageUploadOption(idx, ImageUploadOption.NONE)}
+                            >
+                                Mantener Actual
+                            </button>
+                         )}
+                      </div>
+
+                      {/* Renderizar input de archivo si la opción es FILE */}
+                      {uploadOption.get(idx) === ImageUploadOption.FILE && (
+                        <div className={style.imageUploadGroup}>
+                          <label>
+                            Archivo de Imagen {imgIdx + 1}:
+                            <input
+                              type="file"
+                              name={`detalle[${idx}].imagenesFile[${imgIdx}]`} // Nombre único para el input de archivo
+                              onChange={(e) => handleFileChange(e, idx, imgIdx)}
+                              accept="image/*"
+                              disabled={imgItem.loading}
+                            />
+                          </label>
+                        </div>
+                      )}
+
+                      {/* Renderizar input de URL si la opción es URL */}
+                      {uploadOption.get(idx) === ImageUploadOption.URL && (
+                        <div className={style.imageUploadGroup}>
+                          <label>
+                            URL de Imagen:
+                            <input
+                              type="url"
+                              name={`detalle[${idx}].imagenesUrl[${imgIdx}]`} // Nombre único para el input de URL
+                              value={imgItem.url} // Usar la 'url' del item
+                              onChange={(e) => handleImageUrlChange(e, idx, imgIdx)}
+                              placeholder="https://ejemplo.com/imagen.jpg"
+                              disabled={imgItem.loading}
+                            />
+                          </label>
+                        </div>
+                      )}
+
+                      {imgItem.loading && (
+                        <p className={style.loadingMessage}>Subiendo imagen...</p>
+                      )}
+                      {imgItem.error && (
+                        <p className={style.errorMessage}>{imgItem.error}</p>
+                      )}
+                      {/* Previsualización siempre visible si hay una URL o archivo para previsualizar */}
+                      {imgItem.preview && (
+                        <div className={style.imagePreviewContainer}>
+                          <img src={imgItem.preview} alt="Previsualización" className={style.imagePreview} />
+                        </div>
+                      )}
+
+                      {(imgItem.file || imgItem.url) && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImagenFromDetalle(idx, imgIdx)}
+                          className={style.smallButton}
+                        >
+                          Eliminar Imagen
                         </button>
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={() => handleAddImagenToDetalle(idx)} className={style.smallButton}>
-                    + Añadir Campo de Imagen
+                  <button type="button" onClick={() => handleAddImagenToDetalle(idx)} className={style.addImagenButton}>
+                    + Añadir Imagen
                   </button>
                 </div>
                 {
@@ -524,7 +613,7 @@ export const ModalEditarProducto = ({ isOpen, onClose, producto, categorias, onE
 
         {error && <p className={style.errorMessage}>{error}</p>}
 
-        <button type="submit" disabled={loading || formData.detalle.some(det => det.loadingImage)} className={style.submitButton}>
+        <button type="submit" disabled={loading || formData.detalle.some(det => det.imagenes.some(img => img.loading))} className={style.submitButton}>
           {loading ? 'Guardando cambios...' : 'Guardar cambios'}
         </button>
       </form>

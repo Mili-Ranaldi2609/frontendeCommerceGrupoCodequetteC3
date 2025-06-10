@@ -7,7 +7,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Slightly darker overlay for better contrast */
+    background: rgba(62, 39, 35, 0.26);
     display: flex;
     justify-content: flex-end; /* Aligns the modal to the right */
     z-index: 1000;

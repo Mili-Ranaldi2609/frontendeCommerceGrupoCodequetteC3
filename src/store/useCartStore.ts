@@ -11,7 +11,7 @@ export interface CartItem {
   quantity: number; // Quantity of this specific item
   color: string;
   talle: string;
-  imageUrl?: string; // Optional: Image URL for display in cart/modal
+  imageUrl: string; // Optional: Image URL for display in cart/modal
 }
 
 interface CartState {

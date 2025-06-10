@@ -1,7 +1,7 @@
 import type { Producto } from "./IProduct"
 
 export type ICategoria = {
-    id?:number
+    id:number
     descripcion:string
     categoriaPadre?:ICategoria
     subcategorias?:ICategoria[]

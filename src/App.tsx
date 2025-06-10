@@ -1,7 +1,7 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Home } from "./components/screens/Home/home";
 import { ProductoDetalle } from "./components/screens/ProductoPage/ProductoPage";
-import Catalogo from "./components/screens/Catalog/Catalog";
+import Catalogo from "./components/screens/Catalog/Catalog"; // Make sure this path is correct
 import { Register } from "./components/screens/Login/Register";
 import Layout from "./components/ui/Layout/Layout";
 import {AdminPage} from './components/screens/Admin/AdminPage';
@@ -18,9 +18,14 @@ export const App = () => {
         <Route index element={<Navigate to="/home" />} />
         <Route path="home" element={<Home />} />
         <Route path="producto/:id" element={<ProductoDetalle />} />
-        {/* RUTA DINÁMICA para /catalogo/mujer, /catalogo/hombre, etc. */}
-        <Route path="catalogo/:genero" element={<Catalogo />} />
+
+        {/* C A M B I O S   A Q U Í */}
+        {/* RUTA PARA /productos?sexo=FEMENINO&categoria=... */}
         <Route path="catalogo" element={<Catalogo />} />
+        {/* Si también usas /productos/mujer (sin query params), mantén esta: */}
+        <Route path="productos/:genero" element={<Catalogo />} />
+        {/* F I N   D E   C A M B I O S */}
+
         <Route path="register" element={<Register />} />
         <Route path="cart" element={<CartPage />} />
 
@@ -42,8 +47,6 @@ export const App = () => {
             <UsersTable />
           </AdminRoute>
         } />
-
-        {/* Catch-all route for 404 - Debe ir al final */}
         <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
       </Route>
     </Routes>
