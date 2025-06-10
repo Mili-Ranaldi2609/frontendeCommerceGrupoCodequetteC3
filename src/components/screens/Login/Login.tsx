@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import { loginUsuario } from "../../../services/ConectionApi";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
 
 type Props = {
   visible: boolean;
@@ -11,8 +13,9 @@ type Props = {
 export const LoginModal = ({ visible, onClose }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  
+
   if (!visible) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -46,7 +49,9 @@ export const LoginModal = ({ visible, onClose }: Props) => {
     onClose();
     navigate("/register");
   };
-
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -65,13 +70,22 @@ export const LoginModal = ({ visible, onClose }: Props) => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className={styles.passwordInputContainer}> {/* Nuevo contenedor para el input y el ojo */}
+            <input
+              type={showPassword ? "text" : "password"} // Alterna el tipo
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className={styles.passwordToggle}
+              onClick={togglePasswordVisibility}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Renderiza el ícono */}
+            </span>
+          </div>
           <button type="submit">Ingresar</button>
         </form>
 

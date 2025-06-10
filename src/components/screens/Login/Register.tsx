@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import styles from "./Register.module.css";
 import { useNavigate } from "react-router-dom";
 import { registerUsuario } from "../../../services/ConectionApi";
-
+import * as yup from "yup";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 type FormData = {
   nombre: string;
   apellido: string;
-  username: string; // Esto es el email
+  username: string;
   genero: string;
   password: string;
   confirmarPassword: string;
@@ -19,8 +20,47 @@ type FormErrors = {
   genero?: string;
   password?: string;
   confirmarPassword?: string;
-  general?: string; // For general form errors
+  general?: string;
 };
+
+const registerSchema = yup.object().shape({
+  nombre: yup
+    .string()
+    .trim()
+    .required("El nombre es obligatorio.")
+    .min(3, "El nombre debe tener al menos 3 caracteres.")
+    .max(50, "El nombre no puede exceder los 50 caracteres."),
+  apellido: yup
+    .string()
+    .trim()
+    .required("El apellido es obligatorio.")
+    .min(2, "El apellido debe tener al menos 2 caracteres.")
+    .max(50, "El apellido no puede exceder los 50 caracteres."),
+  username: yup
+    .string()
+    .trim()
+    .email("Por favor, ingresa un email válido.")
+    .required("El email es obligatorio."),
+  genero: yup
+    .string()
+    .oneOf(["Hombre", "Mujer", "Otro", ""], "Selecciona un género válido.")
+    .required("Debes seleccionar un género."),
+  password: yup
+    .string()
+    .required("La contraseña es obligatoria.")
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .matches(/[a-z]/, "La contraseña debe contener al menos una letra minúscula.")
+    .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula.")
+    .matches(/\d/, "La contraseña debe contener al menos un número.")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "La contraseña debe contener al menos un símbolo."
+    ),
+  confirmarPassword: yup
+    .string()
+    .required("Debes confirmar tu contraseña.")
+    .oneOf([yup.ref("password")], "Las contraseñas no coinciden."),
+});
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -32,27 +72,34 @@ export const Register = () => {
     password: "",
     confirmarPassword: "",
   });
+  // Nuevo estado para la visibilidad de las contraseñas
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Effect to validate password match in real-time
   useEffect(() => {
-    if (form.password && form.confirmarPassword) {
-      if (form.password !== form.confirmarPassword) {
-        setErrors((prev) => ({
-          ...prev,
-          confirmarPassword: "Las contraseñas no coinciden.",
-        }));
-      } else {
+    const validateField = async () => {
+      try {
+        await registerSchema.validateAt("confirmarPassword", form);
         setErrors((prev) => {
           const newErrors = { ...prev };
           delete newErrors.confirmarPassword;
           return newErrors;
         });
+      } catch (err: any) {
+        if (err.name === "ValidationError" && err.path === "confirmarPassword") {
+          setErrors((prev) => ({
+            ...prev,
+            confirmarPassword: err.message,
+          }));
+        }
       }
+    };
+
+    if (form.password || form.confirmarPassword) {
+      validateField();
     } else {
-      // Clear error if one of the password fields is empty
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors.confirmarPassword;
@@ -60,68 +107,42 @@ export const Register = () => {
       });
     }
   }, [form.password, form.confirmarPassword]);
-
-  const handleChange = (
+  const handleChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear the error for the current field as the user types
-    if (errors[name as keyof FormErrors]) {
+
+    try {
+      // Aquí aplicamos el "type assertion"
+      // Le decimos a TypeScript que el resultado de yup.reach es definitivamente un esquema Yup que tiene validate
+      await (yup.reach(registerSchema, name) as yup.AnySchema).validate(value);
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[name as keyof FormErrors];
         return newErrors;
       });
+    } catch (err: any) {
+      // Es buena práctica usar `instanceof` para errores de Yup
+      if (err instanceof yup.ValidationError) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: err.message,
+        }));
+      } else {
+        // Maneja otros tipos de errores si es necesario
+        console.error("Error inesperado en handleChange:", err);
+      }
     }
-  };
-
-  const validateForm = (formData: FormData) => {
-    const newErrors: FormErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!formData.nombre.trim()) {
-      newErrors.nombre = "El nombre es obligatorio.";
-    }
-    if (!formData.apellido.trim()) {
-      newErrors.apellido = "El apellido es obligatorio.";
-    }
-    if (!formData.username.trim()) {
-      newErrors.username = "El email es obligatorio.";
-    } else if (!emailRegex.test(formData.username)) {
-      newErrors.username = "Por favor, ingresá un email válido.";
-    }
-    if (!formData.genero) {
-      newErrors.genero = "Debes seleccionar un género.";
-    }
-    if (!formData.password) {
-      newErrors.password = "La contraseña es obligatoria.";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
-    }
-    if (!formData.confirmarPassword) {
-      newErrors.confirmarPassword = "Debes confirmar tu contraseña.";
-    } else if (formData.password !== formData.confirmarPassword) {
-      newErrors.confirmarPassword = "Las contraseñas no coinciden.";
-    }
-
-    return newErrors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setErrors({}); // Clear previous errors
-
-    const validationErrors = validateForm(form);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setIsSubmitting(false);
-      return; // Stop submission if there are errors
-    }
+    setErrors({});
 
     try {
+      await registerSchema.validate(form, { abortEarly: false });
       await registerUsuario({
         firstname: form.nombre,
         lastname: form.apellido,
@@ -132,36 +153,55 @@ export const Register = () => {
 
       alert("Registro exitoso. Ahora podés iniciar sesión.");
       navigate("/", { state: { openLoginModal: true } });
-    } catch (error: any) {
-      setIsSubmitting(false);
-      if (error.response?.status === 409) {
+    } catch (err: any) {
+      if (err instanceof yup.ValidationError) {
+        const newErrors: FormErrors = {};
+        err.inner.forEach((error) => {
+          if (error.path) {
+            newErrors[error.path as keyof FormErrors] = error.message;
+          }
+        });
+        setErrors(newErrors);
+      } else if (err.response?.status === 409) {
         setErrors((prev) => ({
           ...prev,
           general: "Ya existe un usuario registrado con ese email.",
         }));
       } else {
-        console.error("Error al registrar:", error);
+        console.error("Error al registrar:", err);
         setErrors((prev) => ({
           ...prev,
-          general: "No se pudo registrar el usuario. Intentá nuevamente.",
+          general: "No se pudo registrar el usuario. Intenta nuevamente.",
         }));
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  // Funciones para alternar la visibilidad
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
+    };
 
-  // Determine if the form is valid for submission (all fields meet basic criteria, passwords match)
-  const isFormValid = Object.keys(errors).length === 0 &&
-                      form.nombre.trim() !== "" &&
-                      form.apellido.trim() !== "" &&
-                      form.username.trim() !== "" &&
-                      form.genero !== "" &&
-                      form.password.length >= 6 &&
-                      form.password === form.confirmarPassword;
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword((prev) => !prev);
+    };
+
+  const isFormValid =
+    Object.keys(errors).length === 0 &&
+    form.nombre.trim() !== "" &&
+    form.apellido.trim() !== "" &&
+    form.username.trim() !== "" &&
+    form.genero !== "" &&
+    form.password.trim() !== "" &&
+    form.confirmarPassword.trim() !== "";
 
   return (
     <div className={styles.container}>
       <h2 className={styles.titulo}>Registrate</h2>
-      <p className={styles.subtitulo}>Registrate y obtené un descuento especial</p>
+      <p className={styles.subtitulo}>
+        Registrate y obtené un descuento especial
+      </p>
 
       <form onSubmit={handleSubmit} className={styles.formulario}>
         <div className={styles.grid}>
@@ -174,10 +214,13 @@ export const Register = () => {
               value={form.nombre}
               onChange={handleChange}
               className={errors.nombre ? styles.inputError : ""}
-              required
+              aria-invalid={errors.nombre ? "true" : "false"}
+              aria-describedby={errors.nombre ? "nombre-error" : undefined}
             />
             {errors.nombre && (
-              <p className={styles.errorMessage}>{errors.nombre}</p>
+              <p id="nombre-error" className={styles.errorMessage}>
+                {errors.nombre}
+              </p>
             )}
           </div>
           <div>
@@ -189,10 +232,13 @@ export const Register = () => {
               value={form.apellido}
               onChange={handleChange}
               className={errors.apellido ? styles.inputError : ""}
-              required
+              aria-invalid={errors.apellido ? "true" : "false"}
+              aria-describedby={errors.apellido ? "apellido-error" : undefined}
             />
             {errors.apellido && (
-              <p className={styles.errorMessage}>{errors.apellido}</p>
+              <p id="apellido-error" className={styles.errorMessage}>
+                {errors.apellido}
+              </p>
             )}
           </div>
           <div>
@@ -204,10 +250,13 @@ export const Register = () => {
               value={form.username}
               onChange={handleChange}
               className={errors.username ? styles.inputError : ""}
-              required
+              aria-invalid={errors.username ? "true" : "false"}
+              aria-describedby={errors.username ? "username-error" : undefined}
             />
             {errors.username && (
-              <p className={styles.errorMessage}>{errors.username}</p>
+              <p id="username-error" className={styles.errorMessage}>
+                {errors.username}
+              </p>
             )}
           </div>
           <div>
@@ -220,7 +269,8 @@ export const Register = () => {
               value={form.genero}
               onChange={handleChange}
               className={errors.genero ? styles.inputError : ""}
-              required
+              aria-invalid={errors.genero ? "true" : "false"}
+              aria-describedby={errors.genero ? "genero-error" : undefined}
             >
               <option value="">-Select-</option>
               <option value="Hombre">Hombre</option>
@@ -228,47 +278,82 @@ export const Register = () => {
               <option value="Otro">Otro</option>
             </select>
             {errors.genero && (
-              <p className={styles.errorMessage}>{errors.genero}</p>
+              <p id="genero-error" className={styles.errorMessage}>
+                {errors.genero}
+              </p>
             )}
           </div>
-          <div>
+
+          {/* Campo de Contraseña */}
+          <div className={styles.passwordInputContainer}> {/* Nuevo contenedor */}
             <label htmlFor="password">Contraseña</label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"} // Alterna el tipo
               name="password"
               value={form.password}
               onChange={handleChange}
               className={errors.password ? styles.inputError : ""}
-              required
+              aria-invalid={errors.password ? "true" : "false"}
+              aria-describedby={errors.password ? "password-error" : undefined}
             />
+            <span
+              className={styles.passwordToggle} // Estilos para el ícono
+              onClick={togglePasswordVisibility}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Renderiza el ícono */}
+            </span>
             {errors.password && (
-              <p className={styles.errorMessage}>{errors.password}</p>
+              <p id="password-error" className={styles.errorMessage}>
+                {errors.password}
+              </p>
             )}
           </div>
-          <div>
+
+          {/* Campo de Confirmar Contraseña */}
+          <div className={styles.passwordInputContainer}> {/* Nuevo contenedor */}
             <label htmlFor="confirmarPassword">Repetí tu contraseña</label>
             <input
               id="confirmarPassword"
-              type="password"
+              type={showConfirmPassword ? "text" : "password"} // Alterna el tipo
               name="confirmarPassword"
               value={form.confirmarPassword}
               onChange={handleChange}
               className={errors.confirmarPassword ? styles.inputError : ""}
-              required
+              aria-invalid={errors.confirmarPassword ? "true" : "false"}
+              aria-describedby={
+                errors.confirmarPassword ? "confirmarPassword-error" : undefined
+              }
             />
+            <span
+              className={styles.passwordToggle} // Estilos para el ícono
+              onClick={toggleConfirmPasswordVisibility}
+              aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />} {/* Renderiza el ícono */}
+            </span>
             {errors.confirmarPassword && (
-              <p className={styles.errorMessage}>{errors.confirmarPassword}</p>
+              <p id="confirmarPassword-error" className={styles.errorMessage}>
+                {errors.confirmarPassword}
+              </p>
             )}
           </div>
           {errors.general && (
-            <p className={styles.errorMessage} style={{ gridColumn: "1 / -1", textAlign: "center" }}>
+            <p
+              className={styles.errorMessage}
+              style={{ gridColumn: "1 / -1", textAlign: "center" }}
+            >
               {errors.general}
             </p>
           )}
         </div>
 
-        <button type="submit" className={styles.boton} disabled={isSubmitting || !isFormValid}>
+        <button
+          type="submit"
+          className={styles.boton}
+          disabled={isSubmitting || !isFormValid}
+        >
           {isSubmitting ? "Registrando..." : "Enviar"}
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div key={n} className={styles[`star-${n}`]}>
