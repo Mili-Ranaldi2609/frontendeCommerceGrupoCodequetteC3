@@ -23,6 +23,11 @@ interface CartModalProps {
 export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     const { items, total, increaseQuantity, decreaseQuantity, removeFromCart } = useCartStore();
 
+    // Define the free shipping threshold
+    const FREE_SHIPPING_THRESHOLD = 200000;
+    const progress = Math.min((total / FREE_SHIPPING_THRESHOLD) * 100, 100);
+    const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - total;
+
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -91,6 +96,18 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         <b>Mi Compra</b>
                         <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar modal">X</button>
                     </div>
+
+                    <div className={styles.progressBarContainer}>
+                        <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+                        <div className={styles.circulito} style={{ left: `${progress}%` }}></div>
+                    </div>
+                    <p className={styles.shippingMessage}>
+                        {total >= FREE_SHIPPING_THRESHOLD ? (
+                            <span className={styles.freeShipping}>¡Tenes envío gratis! </span>
+                        ) : (
+                            <span>Faltan **${remainingForFreeShipping.toFixed(2)}** para envío gratis</span>
+                        )}
+                    </p>
 
                     {items.length > 0 ? (
                         <>

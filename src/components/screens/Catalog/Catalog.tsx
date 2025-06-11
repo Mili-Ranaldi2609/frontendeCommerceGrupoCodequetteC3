@@ -9,6 +9,7 @@ import { useOrdenesCompraDetalle } from "../../../hooks/useOrdenCompraDetalle";
 import { MdOutlineFilterListOff } from "react-icons/md";
 import type { IDetalle} from '../../../types/IDetalle';
 import type { ICategoria } from '../../../types/ICategoria';
+import { IEnumTalle } from "../../../types/IEnumTalle";
 
 const generoMap: Record<string, string> = {
   MUJER: "FEMENINO",
@@ -18,7 +19,24 @@ const generoMap: Record<string, string> = {
   UNISEX: "UNISEX",
 };
 
-const talles = ["XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "2XL"];
+const talles: string[] = Object.values(IEnumTalle).sort((a, b) => {
+    const numA = parseInt(a.replace('TALLE_', ''));
+    const numB = parseInt(b.replace('TALLE_', ''));
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+    }
+    if (!isNaN(numA)) return 1;
+    if (!isNaN(numB)) return -1;
+    const customOrder = ["XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "2XL"];
+    const indexA = customOrder.indexOf(a);
+    const indexB = customOrder.indexOf(b);
+
+    if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+    }
+    return a.localeCompare(b); // Fallback para otros
+});
 const generos = ["FEMENINO", "MASCULINO", "UNISEX", "UNISEX_CHILD"];
 const colores = [
   { nombre: "NEGRO", color: "#000000" },
@@ -59,8 +77,6 @@ const Catalogo = () => {
   const { productos, loading, error } = useProducto();
   const { ordenesCompraDetalle } = useOrdenesCompraDetalle();
 
-  const [mostrarFiltro, setMostrarFiltro] = useState(true);
-
   const [filtros, setFiltros] = useState<Filtros>(() => {
     const queryParams = new URLSearchParams(location.search);
     return {
@@ -74,7 +90,15 @@ const Catalogo = () => {
       subcategoria: queryParams.get("subcategoria") || "",
     };
   });
-
+  const [mostrarFiltro, setMostrarFiltro] = useState(true);
+  const [seccionesPlegadas, setSeccionesPlegadas] = useState({
+    precio: false,
+    tipoProducto: false,
+    talle: false,
+    genero: false,
+    colores: false,
+    categorias: false,
+  });
   const [orden, setOrden] = useState<"precioDesc" | "masVendidos" | "masNuevos" | "">(() => {
   const params = new URLSearchParams(location.search);
   const ordenFromUrl = params.get("orden");
@@ -104,7 +128,12 @@ const Catalogo = () => {
     setOrden("");
   }
 }, [location.search]);
-
+const toggleSeccion = useCallback((seccion: keyof typeof seccionesPlegadas) => {
+    setSeccionesPlegadas(prev => ({
+      ...prev,
+      [seccion]: !prev[seccion],
+    }));
+  }, []);
 
   const categoriasUnicas = useMemo(() => {
     const uniqueCategoriesMap = new Map<number, ICategoria>();
@@ -328,183 +357,265 @@ const Catalogo = () => {
         <div className={styles.catalogoLayout}>
           {mostrarFiltro && (
             <aside className={styles.filtroSidebar} aria-label="Filtros de productos">
+              {/* Sección de Precio */}
               <section className={styles.filtroSeccion}>
-                <h4>Precio</h4>
-                <div className={styles.precioInputGroup}>
-                  <label htmlFor="precioMin">Mínimo:</label>
-                  <input
-                    type="number"
-                    id="precioMin"
-                    name="precioMin"
-                    value={filtros.precioMin === 0 ? "" : filtros.precioMin}
-                    onChange={handlePrecioChange}
-                    className={styles.precioInput}
-                    min="0"
-                    placeholder="0"
-                    aria-label="Precio mínimo"
-                  />
+                <div
+                  className={styles.filtroHeader}
+                  onClick={() => toggleSeccion("precio")}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("precio"); }}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={!seccionesPlegadas.precio}
+                  aria-controls="panel-precio"
+                >
+                  <h4>Precio</h4>
+                  <span>{seccionesPlegadas.precio ? '▼' : '▲'}</span>
                 </div>
-                <div className={styles.precioInputGroup}>
-                  <label htmlFor="precioMax">Máximo:</label>
-                  <input
-                    type="number"
-                    id="precioMax"
-                    name="precioMax"
-                    value={filtros.precioMax === 999999 ? "" : filtros.precioMax}
-                    onChange={handlePrecioChange}
-                    className={styles.precioInput}
-                    min="0"
-                    placeholder="999999"
-                    aria-label="Precio máximo"
-                  />
-                </div>
-              </section>
-
-              <section className={styles.filtroSeccion}>
-                <h4>Tipo de Producto</h4>
-                <div className={styles.listaTipoProducto} role="group" aria-label="Filtrar por tipo de producto">
-                  {tiposUnicos.map((tipo) => (
-                    <button
-                      key={tipo}
-                      type="button"
-                      className={classNames(styles.botonTexto, {
-                        [styles.botonActivoGenero]: filtros.tipoProducto === tipo,
-                      })}
-                      onClick={() => toggleFiltroIndividual("tipoProducto", tipo)}
-                      aria-pressed={filtros.tipoProducto === tipo}
-                    >
-                      {tipo}
-                    </button>
-                  ))}
+                <div id="panel-precio" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.precio })}>
+                  <div className={styles.precioInputGroup}>
+                    <label htmlFor="precioMin">Mínimo:</label>
+                    <input
+                      type="number"
+                      id="precioMin"
+                      name="precioMin"
+                      value={filtros.precioMin === 0 ? "" : filtros.precioMin}
+                      onChange={handlePrecioChange}
+                      className={styles.precioInput}
+                      min="0"
+                      placeholder="0"
+                      aria-label="Precio mínimo"
+                    />
+                  </div>
+                  <div className={styles.precioInputGroup}>
+                    <label htmlFor="precioMax">Máximo:</label>
+                    <input
+                      type="number"
+                      id="precioMax"
+                      name="precioMax"
+                      value={filtros.precioMax === 999999 ? "" : filtros.precioMax}
+                      onChange={handlePrecioChange}
+                      className={styles.precioInput}
+                      min="0"
+                      placeholder="999999"
+                      aria-label="Precio máximo"
+                    />
+                  </div>
                 </div>
               </section>
 
+              {/* Sección de Tipo de Producto */}
               <section className={styles.filtroSeccion}>
-                <h4>Talle</h4>
-                <div className={styles.gridBotones} role="group" aria-label="Filtrar por talle">
-                  {talles.map((talle) => (
-                    <button
-                      key={talle}
-                      type="button"
-                      className={classNames(styles.botonFiltro, {
-                        [styles.botonActivoTalle]: filtros.talle === talle,
-                      })}
-                      onClick={() => toggleFiltroIndividual("talle", talle)}
-                      aria-pressed={filtros.talle === talle}
-                    >
-                      {talle}
-                    </button>
-                  ))}
+                <div
+                  className={styles.filtroHeader}
+                  onClick={() => toggleSeccion("tipoProducto")}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("tipoProducto"); }}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={!seccionesPlegadas.tipoProducto}
+                  aria-controls="panel-tipo-producto"
+                >
+                  <h4>Tipo de Producto</h4>
+                  <span>{seccionesPlegadas.tipoProducto ? '▼' : '▲'}</span>
                 </div>
-              </section>
-
-              <section className={styles.filtroSeccion}>
-                <h4>Género</h4>
-                <div className={styles.listaGenero} role="group" aria-label="Filtrar por género">
-                  {generos.map((g) => (
-                    <button
-                      key={g}
-                      type="button"
-                      className={classNames(styles.botonTexto, {
-                        [styles.botonActivoGenero]: filtros.genero === g,
-                      })}
-                      onClick={() => toggleFiltroIndividual("genero", g)}
-                      aria-pressed={filtros.genero === g}
-                    >
-                      {g}
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <section className={styles.filtroSeccion}>
-                <h4>Colores</h4>
-                <div className={styles.filtrosColores} role="list">
-                  {colores.map(({ nombre, color }) => (
-                    <div key={nombre} className={styles.colorFiltroWrapper}>
-                      <div
-                        className="checkbox-wrapper-12"
-                        role="listitem"
-                        onClick={() => toggleFiltroIndividual("color", nombre)}
-                        onKeyDown={(e) => {
-                          if (["Enter", " "].includes(e.key)) {
-                            e.preventDefault();
-                            toggleFiltroIndividual("color", nombre);
-                          }
-                        }}
-                        tabIndex={0}
-                        aria-pressed={filtros.color === nombre}
-                        aria-label={`Filtrar por color ${nombre}`}
-                        style={
-                          {
-                            "--circle-color": color,
-                            "--splash-color": color,
-                          } as React.CSSProperties
-                        }
+                <div id="panel-tipo-producto" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.tipoProducto })}>
+                  <div className={styles.listaTipoProducto} role="group" aria-label="Filtrar por tipo de producto">
+                    {tiposUnicos.map((tipo) => (
+                      <button
+                        key={tipo}
+                        type="button"
+                        className={classNames(styles.botonTexto, {
+                          [styles.botonActivoGenero]: filtros.tipoProducto === tipo,
+                        })}
+                        onClick={() => toggleFiltroIndividual("tipoProducto", tipo)}
+                        aria-pressed={filtros.tipoProducto === tipo}
                       >
-                        <div className="cbx">
-                          <input
-                            type="checkbox"
-                            checked={filtros.color === nombre}
-                            readOnly
-                            tabIndex={-1}
-                          />
-                          <label />
-                          {filtros.color === nombre && (
-                            <svg viewBox="0 0 12 10" stroke="#fff" strokeWidth="1.5" fill="none">
-                              <polyline points="1.5 6 4.5 9 10.5 1" />
-                            </svg>
-                          )}
+                        {tipo}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Sección de Talle */}
+              <section className={styles.filtroSeccion}>
+                <div
+                  className={styles.filtroHeader}
+                  onClick={() => toggleSeccion("talle")}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("talle"); }}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={!seccionesPlegadas.talle}
+                  aria-controls="panel-talle"
+                >
+                  <h4>Talle</h4>
+                  <span>{seccionesPlegadas.talle ? '▼' : '▲'}</span>
+                </div>
+                <div id="panel-talle" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.talle })}>
+                  <div className={styles.gridBotones} role="group" aria-label="Filtrar por talle">
+                    {talles.map((talle) => (
+                      <button
+                        key={talle}
+                        type="button"
+                        className={classNames(styles.botonFiltro, {
+                          [styles.botonActivoTalle]: filtros.talle === talle,
+                        })}
+                        onClick={() => toggleFiltroIndividual("talle", talle)}
+                        aria-pressed={filtros.talle === talle}
+                      >
+                        {talle.replace('TALLE_', '')} {/* Mostrar solo el número si tiene "TALLE_" */}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Sección de Género */}
+              <section className={styles.filtroSeccion}>
+                <div
+                  className={styles.filtroHeader}
+                  onClick={() => toggleSeccion("genero")}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("genero"); }}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={!seccionesPlegadas.genero}
+                  aria-controls="panel-genero"
+                >
+                  <h4>Género</h4>
+                  <span>{seccionesPlegadas.genero ? '▼' : '▲'}</span>
+                </div>
+                <div id="panel-genero" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.genero })}>
+                  <div className={styles.listaGenero} role="group" aria-label="Filtrar por género">
+                    {generos.map((g) => (
+                      <button
+                        key={g}
+                        type="button"
+                        className={classNames(styles.botonTexto, {
+                          [styles.botonActivoGenero]: filtros.genero === g,
+                        })}
+                        onClick={() => toggleFiltroIndividual("genero", g)}
+                        aria-pressed={filtros.genero === g}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              {/* Sección de Colores */}
+              <section className={styles.filtroSeccion}>
+                <div
+                  className={styles.filtroHeader}
+                  onClick={() => toggleSeccion("colores")}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("colores"); }}
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={!seccionesPlegadas.colores}
+                  aria-controls="panel-colores"
+                >
+                  <h4>Colores</h4>
+                  <span>{seccionesPlegadas.colores ? '▼' : '▲'}</span>
+                </div>
+                <div id="panel-colores" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.colores })}>
+                  <div className={styles.filtrosColores} role="list">
+                    {colores.map(({ nombre, color }) => (
+                      <div key={nombre} className={styles.colorFiltroWrapper}>
+                        <div
+                          className="checkbox-wrapper-12"
+                          role="listitem"
+                          onClick={() => toggleFiltroIndividual("color", nombre)}
+                          onKeyDown={(e) => {
+                            if (["Enter", " "].includes(e.key)) {
+                              e.preventDefault();
+                              toggleFiltroIndividual("color", nombre);
+                            }
+                          }}
+                          tabIndex={0}
+                          aria-pressed={filtros.color === nombre}
+                          aria-label={`Filtrar por color ${nombre}`}
+                          style={
+                            {
+                              "--circle-color": color,
+                              "--splash-color": color,
+                            } as React.CSSProperties
+                          }
+                        >
+                          <div className="cbx">
+                            <input
+                              type="checkbox"
+                              checked={filtros.color === nombre}
+                              readOnly
+                              tabIndex={-1}
+                            />
+                            <label />
+                            {filtros.color === nombre && (
+                              <svg viewBox="0 0 12 10" stroke="#fff" strokeWidth="1.5" fill="none">
+                                <polyline points="1.5 6 4.5 9 10.5 1" />
+                              </svg>
+                            )}
+                          </div>
                         </div>
+                        <span className={styles.colorNombre}>{nombre}</span>
                       </div>
-                      <span className={styles.colorNombre}>{nombre}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </section>
 
               {/* Categoría y Subcategoría */}
               {categoriasUnicas.length > 0 && (
                 <section className={styles.filtroSeccion}>
-                  <h4>Categorías</h4>
-                  <div className={styles.categoryList} role="group" aria-label="Filtrar por categoría">
-                    {categoriasUnicas.map(cat => (
-                      <div key={cat.id} className={styles.categoryFilterGroup}>
-                        <button
-                          type="button"
-                          className={classNames(styles.botonTexto, {
-                            [styles.botonActivoGenero]: filtros.categoria === cat.descripcion,
-                          })}
-                          onClick={() => toggleFiltroIndividual("categoria", cat.descripcion)}
-                          aria-pressed={filtros.categoria === cat.descripcion}
-                        >
-                          {cat.descripcion}
-                        </button>
-                        {filtros.categoria === cat.descripcion && cat.subcategorias && cat.subcategorias.length > 0 && (
-                          <div className={styles.subCategoryList} role="group" aria-label={`Subcategorías de ${cat.descripcion}`}>
-                            {cat.subcategorias.map(sub => (
-                              <button
-                                key={sub.id}
-                                type="button"
-                                className={classNames(styles.botonSubCategoria, {
-                                  [styles.botonActivoSubCategoria]: filtros.subcategoria === sub.descripcion,
-                                })}
-                                onClick={() => toggleFiltroIndividual("subcategoria", sub.descripcion)}
-                                aria-pressed={filtros.subcategoria === sub.descripcion}
-                              >
-                                {sub.descripcion}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                  <div
+                    className={styles.filtroHeader}
+                    onClick={() => toggleSeccion("categorias")}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeccion("categorias"); }}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={!seccionesPlegadas.categorias}
+                    aria-controls="panel-categorias"
+                  >
+                    <h4>Categorías</h4>
+                    <span>{seccionesPlegadas.categorias ? '▼' : '▲'}</span>
+                  </div>
+                  <div id="panel-categorias" className={classNames(styles.filtroContenido, { [styles.plegado]: seccionesPlegadas.categorias })}>
+                    <div className={styles.categoryList} role="group" aria-label="Filtrar por categoría">
+                      {categoriasUnicas.map(cat => (
+                        <div key={cat.id} className={styles.categoryFilterGroup}>
+                          <button
+                            type="button"
+                            className={classNames(styles.botonTexto, {
+                              [styles.botonActivoGenero]: filtros.categoria === cat.descripcion,
+                            })}
+                            onClick={() => toggleFiltroIndividual("categoria", cat.descripcion)}
+                            aria-pressed={filtros.categoria === cat.descripcion}
+                          >
+                            {cat.descripcion}
+                          </button>
+                          {filtros.categoria === cat.descripcion && cat.subcategorias && cat.subcategorias.length > 0 && (
+                            <div className={styles.subCategoryList} role="group" aria-label={`Subcategorías de ${cat.descripcion}`}>
+                              {cat.subcategorias.map(sub => (
+                                <button
+                                  key={sub.id}
+                                  type="button"
+                                  className={classNames(styles.botonSubCategoria, {
+                                    [styles.botonActivoSubCategoria]: filtros.subcategoria === sub.descripcion,
+                                  })}
+                                  onClick={() => toggleFiltroIndividual("subcategoria", sub.descripcion)}
+                                  aria-pressed={filtros.subcategoria === sub.descripcion}
+                                >
+                                  {sub.descripcion}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </section>
               )}
             </aside>
           )}
-
           <main
             className={classNames(styles.catalogo, {
               [styles.conFiltro]: mostrarFiltro,

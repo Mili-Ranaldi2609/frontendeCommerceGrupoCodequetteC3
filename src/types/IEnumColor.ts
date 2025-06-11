@@ -5,6 +5,7 @@ export enum IColor {
   NEGRO = "NEGRO",
   VERDE = "VERDE",
   MULTICOLOR = "MULTICOLOR",
+  NARANJA="NARANJA",
   ROJO = "ROJO",
   ROSA = "ROSA",
   MARRON = "MARRON",

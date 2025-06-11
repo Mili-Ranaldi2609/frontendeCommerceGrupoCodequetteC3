@@ -8,44 +8,42 @@
 .catalogoContainer {
   flex: 1;
   font-family: "Lato", sans-serif;
-  max-width: 1200px; /* Limit overall width for better readability */
   width: 100%;
 }
 
 .catalogoLayout {
   display: flex;
   gap: 1.5rem;
+  align-items: flex-start;
+  min-height: 80vh; 
   width: 100%;
 }
 
 .catalogo {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
   margin: 0 auto;
 }
 
-/* Dynamic Grid Columns based on Filter Visibility */
-.conFiltro {
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
-}
+.conFiltro,
 .sinFiltro {
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 /* Header Section */
 .tituloyfiltro {
   display: flex;
-  flex-direction: column; /* Stack elements vertically on smaller screens */
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start; /* Align items to the start */
+  align-items: flex-start; 
   width: 95%;
-  margin: 1rem auto; /* Center the section with auto margins */
-  gap: 1rem; /* Space between elements */
+  margin: 1rem auto;
+  gap: 1rem;
 }
 
 .titulo {
-  font-size: 2.2rem; /* Slightly larger title */
+  font-size: 2.2rem;
   color: #3E2723;
   margin-bottom: 0.5rem;
 }
@@ -64,13 +62,13 @@
   border-radius: 15px;
   font-size: 0.9rem;
   color: #3E2723;
-  white-space: nowrap; /* Prevent tags from breaking */
+  white-space: nowrap;
 }
 
 /* Top Controls (Filter Button, Clear Filters, Sort) */
 .topControls {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: flex-end;
   align-items: flex-end;
@@ -83,7 +81,6 @@
   gap: 0.5rem;
   padding: 0.6rem 1rem;
   background-color: #fff;
-  border: 1px solid #3E2723;
   color: #3E2723;
   border-radius: 5px;
   cursor: pointer;
@@ -98,12 +95,12 @@
 
 .filtroButton svg {
   font-size: 1.2rem;
-  color: #3E2723; /* Default icon color */
+  color: #3E2723; 
   transition: color 0.3s ease;
 }
 
 .filtroButton:hover svg {
-  color: #fff; /* Icon color on hover */
+  color: #fff; 
 }
 
 .limpiarFiltrosBtn {
@@ -111,8 +108,7 @@
   align-items: center;
   gap: 0.5rem;
   background: none;
-  border: 1px solid #3E2723; /* Red border for clear button */
-  color: #3E2723; /* Red text for clear button */
+  color: #3E2723;
   padding: 0.6rem 1rem;
   border-radius: 5px;
   cursor: pointer;
@@ -128,12 +124,12 @@
 .limpiarFiltrosBtn svg {
   width: 1.2rem;
   height: 1.2rem;
-  color: #3E2723; /* Default icon color */
+  color: #3E2723; 
   transition: color 0.3s ease;
 }
 
 .limpiarFiltrosBtn:hover svg {
-  color: #fff; /* Icon color on hover */
+  color: #fff;
 }
 
 .ordenamiento {
@@ -160,22 +156,50 @@
   box-shadow: 0 0 0 2px rgba(62, 39, 35, 0.2);
 }
 
-/* Filter Sidebar */
+/* Filter Sidebar - Consolidated Styles */
 .filtroSidebar {
-  min-width: 250px;
-  max-width: 300px;
-  background-color: #f9f9f9; /* Light background for the sidebar */
-  padding: 1.5rem;
+  width: 300px;
+  flex-shrink: 0; 
+  padding: 1.5rem; 
+  background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  height: fit-content; /* Adjust height to content */
-  position: sticky; /* Keep sidebar in view when scrolling */
-  top: 1rem; /* Distance from the top */
+  position: sticky; 
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3E2723 #f9f9f9;
+
 }
 
+.filtroSidebar::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.filtroSidebar::-webkit-scrollbar-track {
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.filtroSidebar::-webkit-scrollbar-thumb {
+  background-color: #3E2723;
+  border-radius: 10px;
+  border: 2px solid #f9f9f9;
+}
+
+/* Filter Section - Consolidated Styles */
 .filtroSeccion {
-  margin-bottom: 25px;
-  color: #3E2723;
+  margin-bottom: 20px; 
+  border-bottom: 1px solid #eee; 
+  padding-bottom: 15px; 
+  color: #3E2723; 
+}
+
+.filtroSeccion:last-child {
+  border-bottom: none; 
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .filtroSeccion h4 {
@@ -185,6 +209,47 @@
   padding-bottom: 0.5rem;
   color: #3E2723;
 }
+
+/* Filter Header for Collapsible Sections */
+.filtroHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 10px;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.filtroHeader h4 {
+  margin: 0;
+  color: #3E2723;
+  font-size: 1.1em;
+}
+
+.filtroHeader span {
+  font-size: 0.9em;
+  color: #777;
+  transition: transform 0.2s ease;
+}
+
+/* Collapsible Content */
+.filtroContenido {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  opacity: 1;
+}
+
+.filtroContenido.plegado {
+  max-height: 0;
+  opacity: 0;
+  padding-bottom: 0;
+}
+
 
 /* Price Input Group */
 .precioInputGroup {
@@ -196,7 +261,7 @@
 .precioInputGroup label {
   margin-right: 10px;
   font-weight: 500;
-  min-width: 50px; /* Align labels */
+  min-width: 50px;
 }
 
 .precioInput {
@@ -208,7 +273,7 @@
   color: #3E2723;
 }
 
-/* Filter Buttons (Talle, Tipo Producto, Género) */
+/* Filter Buttons (Talle, Tipo Producto, Género) - Consolidated */
 .gridBotones {
   display: flex;
   flex-wrap: wrap;
@@ -222,9 +287,11 @@
   border: 1px solid #3E2723;
   background-color: white;
   color: #3E2723;
-  border-radius: 50%;
-  width: 45px; /* Larger size for better clickability */
+  border-radius: 60%;
+  width: auto;
+  min-width: 45px; 
   height: 45px;
+  padding: 0 10px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-size: 0.9rem;
@@ -239,13 +306,13 @@
   background: none;
   border: none;
   color: #3E2723;
-  font-size: 1rem; /* Standard font size */
-  width: 100%; /* Take full width of parent */
-  text-align: left; /* Align text to the left */
+  font-size: 1rem;
+  width: 100%;
+  text-align: left;
   padding: 0.5rem 0.2rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border-radius: 4px; /* Consistent border radius */
+  border-radius: 4px;
 }
 
 .botonTexto:hover {
@@ -253,19 +320,14 @@
 }
 
 /* Active Button States */
-.botonActivoTalle {
+.botonActivoTalle,
+.botonActivoGenero { 
   background-color: #3E2723;
   color: white;
-  border-color: #3E2723; /* Match border to background */
+  border-color: #3E2723; 
 }
 
-.botonActivoGenero {
-  background-color: #3E2723;
-  color: white;
-  border-color: #3E2723;
-}
-
-/* Specific List Styles */
+/* Specific List Styles - Consolidated */
 .listaTipoProducto,
 .listaGenero {
   display: flex;
@@ -273,10 +335,10 @@
   gap: 0.5rem;
 }
 
-/* Colors Filter */
+/* Colors Filter - Consolidated */
 .filtrosColores {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* More flexible column arrangement */
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 15px;
   margin-top: 1rem;
   justify-items: center;
@@ -287,7 +349,7 @@
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  padding: 5px; /* Add some padding around the color item */
+  padding: 5px;
   border-radius: 5px;
   transition: background-color 0.2s ease;
 }
@@ -297,17 +359,17 @@
 }
 
 .colorNombre {
-  font-size: 0.75rem; /* Smaller font for color names */
+  font-size: 0.75rem;
   text-align: center;
   margin-top: 5px;
   color: #555;
-  white-space: nowrap; /* Prevent names from breaking */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis if name is too long */
-  max-width: 60px; /* Limit width of the color name */
+  text-overflow: ellipsis;
+  max-width: 60px;
 }
 
-/* Category and Subcategory */
+/* Category and Subcategory - Consolidated */
 .categoryList {
   display: flex;
   flex-direction: column;
@@ -323,7 +385,7 @@
 .botonSubCategoria {
   background: none;
   border: none;
-  color: #555; /* Slightly muted color for subcategories */
+  color: #555;
   font-size: 0.9rem;
   width: 100%;
   text-align: left;
@@ -331,7 +393,7 @@
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   border-radius: 4px;
-  margin-left: 1rem; /* Indent subcategories */
+  margin-left: 1rem;
 }
 
 .botonSubCategoria:hover {
@@ -339,7 +401,7 @@
 }
 
 .botonActivoSubCategoria {
-  background-color: #ddd; /* Lighter active state for subcategories */
+  background-color: #ddd;
   color: #3E2723;
   font-weight: 600;
 }
@@ -351,7 +413,7 @@
   margin-top: 0.5rem;
 }
 
-/* Global Checkbox Styles (from your existing code) */
+/* Global Checkbox Styles (no cambios necesarios aquí, ya que es genérico) */
 :global(.checkbox-wrapper-12) {
   position: relative;
   display: flex;
@@ -398,13 +460,13 @@
   left: 0;
   transition: background 0.3s ease;
   pointer-events: none;
-  border: 1px solid #ccc; /* Default border for unchecked circles */
+  border: 1px solid #ccc;
   transition: border-color 0.3s;
   box-sizing: border-box;
 }
 
 :global(.checkbox-wrapper-12 .cbx label[style*="background: rgb(255, 255, 255);"]) {
-  border: 2px solid #303030; /* Stronger border for white color when unchecked */
+  border: 2px solid #303030;
 }
 
 :global(.checkbox-wrapper-12 .cbx svg) {
@@ -428,7 +490,7 @@
 
 :global(.checkbox-wrapper-12 .cbx input:checked + label) {
   animation: splash-12 0.6s ease forwards;
-  border-color: transparent; /* No border when checked */
+  border-color: transparent;
 }
 
 :global(.checkbox-wrapper-12 .cbx input:checked + label + svg polyline) {
@@ -457,14 +519,13 @@
   }
 }
 
-/* Messages (Loading, Error, No Results) */
 .loading,
 .error,
 .noResults {
   text-align: center;
   font-weight: bold;
   color: #a94442;
-  grid-column: 1 / -1; /* Span across all columns */
+  grid-column: 1 / -1;
   padding: 2rem;
   font-size: 1.1rem;
 }
@@ -476,18 +537,22 @@
 /* Responsive Adjustments */
 @media (max-width: 992px) {
   .catalogoLayout {
-    flex-direction: column; /* Stack sidebar and catalog on smaller screens */
+    flex-direction: column;
+    align-items: center;
   }
 
   .filtroSidebar {
-    width: 100%; /* Full width for sidebar */
+    width: 300px;
     margin-right: 0;
-    margin-bottom: 1.5rem; /* Space below the sidebar */
+    margin-bottom: 1.5rem;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
 
   .conFiltro,
   .sinFiltro {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust grid for smaller screens */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 
   .tituloyfiltro {
@@ -497,8 +562,8 @@
   }
 
   .topControls {
-    justify-content: center; /* Center controls */
-    width: 100%; /* Take full width */
+    justify-content: center;
+    width: 100%;
   }
 }
 
@@ -509,25 +574,6 @@
 
   .conFiltro,
   .sinFiltro {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
-}
-
-@media (max-width: 576px) {
-  .titulo {
-    font-size: 1.5rem;
-  }
-
-  .conFiltro,
-  .sinFiltro {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Smaller cards for very small screens */
-  }
-
-  .filtroSeccion h4 {
-    font-size: 1.1rem;
-  }
-
-  .filtrosColores {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }

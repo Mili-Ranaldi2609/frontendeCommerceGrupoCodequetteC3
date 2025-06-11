@@ -75,7 +75,6 @@ export const Register = () => {
   // Nuevo estado para la visibilidad de las contraseñas
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
@@ -114,8 +113,6 @@ export const Register = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
 
     try {
-      // Aquí aplicamos el "type assertion"
-      // Le decimos a TypeScript que el resultado de yup.reach es definitivamente un esquema Yup que tiene validate
       await (yup.reach(registerSchema, name) as yup.AnySchema).validate(value);
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -123,7 +120,6 @@ export const Register = () => {
         return newErrors;
       });
     } catch (err: any) {
-      // Es buena práctica usar `instanceof` para errores de Yup
       if (err instanceof yup.ValidationError) {
         setErrors((prev) => ({
           ...prev,
@@ -179,13 +175,13 @@ export const Register = () => {
     }
   };
   // Funciones para alternar la visibilidad
-    const togglePasswordVisibility = () => {
-        setShowPassword((prev) => !prev);
-    };
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
-    const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword((prev) => !prev);
-    };
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
 
   const isFormValid =
     Object.keys(errors).length === 0 &&
@@ -285,68 +281,58 @@ export const Register = () => {
           </div>
 
           {/* Campo de Contraseña */}
-          <div className={styles.passwordInputContainer}> {/* Nuevo contenedor */}
-            <label htmlFor="password">Contraseña</label>
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"} // Alterna el tipo
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className={errors.password ? styles.inputError : ""}
-              aria-invalid={errors.password ? "true" : "false"}
-              aria-describedby={errors.password ? "password-error" : undefined}
-            />
-            <span
-              className={styles.passwordToggle} // Estilos para el ícono
-              onClick={togglePasswordVisibility}
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Renderiza el ícono */}
-            </span>
-            {errors.password && (
-              <p id="password-error" className={styles.errorMessage}>
-                {errors.password}
-              </p>
-            )}
+          <div className={styles.passwordContainer}>
+
+            <div className={styles.passwordInputContainer}>
+              <label htmlFor="password">Contraseña</label>
+              <div className={styles.inputWithIcon}>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  className={errors.password ? styles.inputError : ""}
+                />
+                <span
+                  className={styles.passwordToggle}
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+            </div>
+
+            {/* Campo de Confirmar Contraseña */}
+            <div className={styles.passwordInputContainerConfirm}> {/* Este también */}
+              <label htmlFor="confirmarPassword">Repetí tu contraseña</label>
+              <input
+                id="confirmarPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmarPassword"
+                value={form.confirmarPassword}
+                onChange={handleChange}
+                className={errors.confirmarPassword ? styles.inputError : ""}
+                aria-invalid={errors.confirmarPassword ? "true" : "false"}
+                aria-describedby={
+                  errors.confirmarPassword ? "confirmarPassword-error" : undefined
+                }
+              />
+              <span
+                className={styles.passwordToggle}
+                onClick={toggleConfirmPasswordVisibility}
+                aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+              {errors.confirmarPassword && (
+                <p id="confirmarPassword-error" className={styles.errorMessage}>
+                  {errors.confirmarPassword}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Campo de Confirmar Contraseña */}
-          <div className={styles.passwordInputContainer}> {/* Nuevo contenedor */}
-            <label htmlFor="confirmarPassword">Repetí tu contraseña</label>
-            <input
-              id="confirmarPassword"
-              type={showConfirmPassword ? "text" : "password"} // Alterna el tipo
-              name="confirmarPassword"
-              value={form.confirmarPassword}
-              onChange={handleChange}
-              className={errors.confirmarPassword ? styles.inputError : ""}
-              aria-invalid={errors.confirmarPassword ? "true" : "false"}
-              aria-describedby={
-                errors.confirmarPassword ? "confirmarPassword-error" : undefined
-              }
-            />
-            <span
-              className={styles.passwordToggle} // Estilos para el ícono
-              onClick={toggleConfirmPasswordVisibility}
-              aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-            >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />} {/* Renderiza el ícono */}
-            </span>
-            {errors.confirmarPassword && (
-              <p id="confirmarPassword-error" className={styles.errorMessage}>
-                {errors.confirmarPassword}
-              </p>
-            )}
-          </div>
-          {errors.general && (
-            <p
-              className={styles.errorMessage}
-              style={{ gridColumn: "1 / -1", textAlign: "center" }}
-            >
-              {errors.general}
-            </p>
-          )}
         </div>
 
         <button

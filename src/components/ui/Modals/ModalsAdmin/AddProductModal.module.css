@@ -1,212 +1,433 @@
-.addProductForm {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; 
-  width: 100%;
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
 }
 
-.formColumns {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+.formContent {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-.generalInfoColumn,
-.detailsColumn {
-  flex: 1; 
-  min-width: 300px; 
-  padding: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fdfdfd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 15px; 
+.generalInfo,
+.productDetails {
+    flex: 1;
+    min-width: 300px;
+    max-width: 100%;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-.generalInfoColumn h3,
-.detailsColumn h3 {
-  text-align: center;
-  margin-bottom: 15px;
-  color: #333;
+.generalInfo:hover,
+.productDetails:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* Estilos para etiquetas e inputs generales */
-.addProductForm label {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #555;
+.generalInfo h3,
+.productDetails h3 {
+    color: #3E2723;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.addProductForm input,
-.addProductForm select,
-.addProductForm textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-top: 5px;
-  width: calc(100% - 20px);
-  box-sizing: border-box;
+.generalInfo label,
+.productDetails label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 0.95em;
 }
 
-.addProductForm select[multiple] {
-  min-height: 100px;
-  overflow-y: auto;
+.generalInfo input,
+.generalInfo select,
+.generalInfo textarea,
+.productDetails input,
+.productDetails select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Estilos para cada grupo de detalle */
-.detalleGroup {
-  border: 1px dashed #a0a0a0;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-  position: relative; 
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.generalInfo input:focus,
+.generalInfo select:focus,
+.generalInfo textarea:focus,
+.productDetails input:focus,
+.productDetails select:focus {
+    border-color: #3E2723;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 68, 0, 0.25);
 }
 
-.detalleGroup h4 {
-  margin-top: 0;
-  color: #444;
+.generalInfo textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
-/* Contenedor de imágenes por detalle */
+.checkboxLabel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 15px 0;
+    font-weight: normal;
+    justify-content: center;
+}
+
+.checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3E2723;
+}
+
+.select_multiple {
+    min-height: 120px;
+    padding: 10px;
+}
+
+.detalleItem {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detalleItem:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.detalleItem h6 {
+    margin: 0 0 10px 0;
+    color: #3E2723;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
 .imagenesDetalleContainer {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background-color: #fff;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #e0e0e0;
 }
 
-.imagenesDetalleContainer h6 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #666;
+.image_input_row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px dashed #d0d0d0;
+    border-radius: 8px;
+    background-color: #fcfcfc;
 }
 
-.imageInputRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+.image_input_row label {
+    flex-grow: 1;
+    margin-bottom: 0;
+    min-width: 150px;
 }
 
-.imageInputRow label {
-  flex-grow: 1; 
-  margin-bottom: 0;
+.image_input_row input[type="file"],
+.image_input_row input[type="url"] {
+    flex-grow: 1;
+    min-width: 200px;
 }
 
-.imageInputRow input {
-  width: 100%;
+.imagePreviewContainer {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+    flex-shrink: 0;
 }
 
-/* Botones específicos de añadir/eliminar */
-.addDetalleButton,
-.addDetalleButton,
-.addImageButton {
-  background-color: #3E2723; 
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  margin-top: 10px;
-  transition: background-color 0.2s ease;
-  align-self: flex-start; 
+.imagePreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.addDetalleButton:hover,
-.addImageButton:hover {
-  background-color: #6b4139;
+.loadingMessage,
+.errorMessage {
+    text-align: center;
+    font-weight: bold;
+    margin: 5px 0;
+    flex-basis: 100%;
 }
 
+.loadingMessage {
+    color: #3E2723;
+}
+
+.errorMessage {
+    color: #dc3545;
+}
+
+/* Botones */
+.smallButton,
 .removeDetalleButton,
-.removeImageButton {
-  background-color: #f44336; 
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background-color 0.2s ease;
+.addDetalleButton,
+.addImagenButton,
+.submitButton {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    text-align: center;
 }
 
-.removeDetalleButton:hover,
-.removeImageButton:hover {
-  background-color: #d32f2f;
+.smallButton,
+.addDetalleButton,
+.addImagenButton,
+.submitButton {
+    background-color: #3E2723;
+    color: white;
+}
+
+.smallButton {
+    font-size: 0.85em;
+    padding: 7px 14px;
+    white-space: nowrap;
 }
 
 .removeDetalleButton {
-  margin-top: 10px;
-  align-self: flex-end; 
+    background-color: #dc3545;
+    color: white;
+    margin: 10px 0 0 auto;
+    display: block;
 }
 
+.addImagenButton {
+    margin: 10px 0 0 auto;
+    font-size: 0.9em;
+    padding: 8px 15px;
+}
 
-/* Botones generales del formulario */
+.addDetalleButton {
+    margin: 15px auto 0;
+    padding: 10px 20px;
+    display: block;
+}
+
 .submitButton {
-  background-color: #3E2723;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem; 
-  cursor: pointer;
-  font-size: 1rem;
-  box-sizing: border-box; 
+    padding: 12px 25px;
+    font-size: 1.1em;
+    margin: 20px auto 0;
+    display: block;
 }
 
-.submitButton:hover {
-  background-color: #6b4139; 
+.smallButton:hover,
+.addDetalleButton:hover,
+.addImagenButton:hover,
+.submitButton:hover:not(:disabled) {
+    background-color: #6b4139;
+    transform: translateY(-1px);
+}
+
+.removeDetalleButton:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
 }
 
 .submitButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
 }
 
+/* Opciones de carga de imagen */
 
-/* Estilo para el select multiple */
-.selectMultiple {
-  width: 100%;
-  height: 150px;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 2px solid #ccc; 
-  border-radius: 4px; 
-  background-color: #fff;
-  overflow-y: auto;
-  appearance: none; 
+.uploadSwitchContainer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
 
-.selectMultiple option {
-  padding: 0.25rem 0.5rem;
+.switchLabel {
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
 }
 
-/* Mensajes de error */
-.errorMessage {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-  font-weight: bold;
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 120px; 
+    height: 34px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #3C3C3C; 
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* Cambios cuando el input está checked (opción "URL") */
+input:checked + .slider {
+    background-color: #3E2723;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #3E2723; 
+}
+
+/* Posición del círculo cuando está checked */
+input:checked + .slider:before {
+    -webkit-transform: translateX(116px);
+    -ms-transform: translateX(116px);
+    transform: translateX(116px);
+}
+
+/* Etiquetas "FILE" y "URL" */
+.slider:after {
+    content: 'FILE';
+    color: white;
+    display: block;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 30%;
+    font-size: 10px;
+    font-family: Verdana, sans-serif;
+    font-weight: bold;
+    transition: left .4s;
+    white-space: nowrap;
+}
+
+input:checked + .slider:after {
+    content: 'URL';
+    left: 70%; 
+}
+
+/* Estilos para el estado deshabilitado */
+.switch input:disabled + .slider {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #cccccc;
+}
+
+.switch input:disabled + .slider:before {
+    background-color: #eeeeee;
+}
+
+.switch input:disabled + .slider:after {
+    color: #999999;
 }
 
 /* Media Queries para Responsividad */
 @media (max-width: 768px) {
-  .formColumns {
-    flex-direction: column; 
-  }
+    .uploadSwitchContainer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .switch {
+        margin-top: 10px;
+    }
+}
 
-  .generalInfoColumn,
-  .detailsColumn {
-    min-width: unset; 
-    width: 100%;
-  }
+.imageUploadGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+    flex-grow: 1;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .formContent {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .generalInfo,
+    .productDetails {
+        width: 100%;
+    }
+
+    .image_input_row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .image_input_row label,
+    .image_input_row input[type="file"],
+    .image_input_row input[type="url"] {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .imagePreviewContainer {
+        width: 100px;
+        height: 100px;
+        margin: 10px auto;
+    }
+
+    .smallButton,
+    .removeDetalleButton,
+    .addImagenButton,
+    .addDetalleButton,
+    .submitButton {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
