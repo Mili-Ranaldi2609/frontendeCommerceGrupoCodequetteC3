@@ -1,0 +1,151 @@
+/* src/components/checkout/SelectAddressPage/SelectAddressPage.module.css */
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.container h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.addressList {
+    margin-bottom: 30px;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+}
+
+.addressItem {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    text-align: left;
+}
+
+.addressItem:last-child {
+    border-bottom: none;
+}
+
+.addressItem:hover {
+    background-color: #f0f0f0;
+}
+
+.addressItem.selected {
+    background-color: #e0f7fa; /* Light cyan */
+    border-color: #00bcd4; /* Cyan */
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+}
+
+.addressRadio {
+    margin-right: 15px;
+    min-width: 20px; /* Ensure radio button has space */
+    min-height: 20px;
+    cursor: pointer;
+}
+
+.addressLabel {
+    flex-grow: 1;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #555;
+}
+
+.addressLabel p {
+    margin: 5px 0;
+}
+
+.addressLabel p strong {
+    color: #333;
+}
+
+.paymentOptions {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+}
+
+.paymentOptions h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+}
+
+.paymentButton {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto; /* Centrar y espaciar */
+    display: block; /* Para que margin auto funcione */
+}
+
+.paymentButton:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.paymentButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.errorMessage {
+    color: #d32f2f; /* Red */
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.noAddresses {
+    padding: 50px 20px;
+    background-color: #fff3e0; /* Light orange */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-top: 30px;
+}
+
+.noAddresses p {
+    font-size: 1.4em;
+    color: #e65100; /* Darker orange */
+    margin-bottom: 25px;
+}
+
+.addAddressBtn, .backToCartBtn, .backButton {
+    background-color: #2196f3; /* Blue */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 500;
+    margin: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.addAddressBtn:hover, .backToCartBtn:hover, .backButton:hover {
+    background-color: #1976d2;
+}

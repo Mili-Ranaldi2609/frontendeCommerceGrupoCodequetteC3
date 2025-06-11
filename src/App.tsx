@@ -10,6 +10,8 @@ import { UserProfile } from "./components/screens/UserProfile/UserProfile";
 import { AdminRoute } from "./routes/AdminRoute";
 import { UserRoute } from "./routes/UserRoute";
 import { UsersTable } from "./components/screens/Admin/UsersTable";
+import { UserAddresses } from "./components/screens/UserProfile/UserAddresses";
+import { SelectAddressPage } from "./components/screens/Cart/SelectAddressPage";
 
 export const App = () => {
   return (
@@ -28,6 +30,15 @@ export const App = () => {
 
         <Route path="register" element={<Register />} />
         <Route path="cart" element={<CartPage />} />
+        <Route path="checkout/select-address" element={<SelectAddressPage />} />
+          {/* Rutas para los resultados de Mercado Pago (éxito, fallo, pendiente) */}
+        {/* Asegúrate de que tu backend redirija a estas URLs después del pago */}
+        <Route path="/checkout/success" element={<div>🎉 ¡Tu pago ha sido procesado con éxito! Gracias por tu compra.</div>} />
+        <Route path="/checkout/failure" element={<div>❌ Ha ocurrido un error al procesar tu pago. Por favor, inténtalo de nuevo.</div>} />
+        <Route path="/checkout/pending" element={<div>⏳ Tu pago está pendiente. Te notificaremos cuando se confirme.</div>} />
+
+        {/* Nueva ruta para la confirmación de órdenes en efectivo */}
+        <Route path="/order-confirmation" element={<div>✅ ¡Orden en Efectivo Creada! Nos pondremos en contacto contigo para coordinar la entrega.</div>} />
 
         {/* Ruta para el perfil de usuario (accesible por cualquier usuario autenticado, incluyendo ADMINs) */}
         <Route path="profile" element={
@@ -35,6 +46,11 @@ export const App = () => {
             <UserProfile />
           </UserRoute>
         } />
+        <Route path="profile/direcciones" element={
+            <UserRoute>
+              <UserAddresses userId={0} />
+            </UserRoute>
+          } />
 
         {/* Rutas de administración */}
         <Route path="admin" element={

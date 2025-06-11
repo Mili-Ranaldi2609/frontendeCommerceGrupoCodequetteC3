@@ -44,6 +44,9 @@ export const UserProfile = () => {
         logout(); 
         navigate("/home");
     };
+    const handleShowAddresses = () => {
+        navigate('/profile/direcciones');
+    };
     const handleUserUpdate = async (userId: number, updatedUserData: Omit<User, 'password'>) => {
         try {
             const response = await updateProfile(updatedUserData);
@@ -78,7 +81,9 @@ export const UserProfile = () => {
                 <div className={styles.infoItem}><strong>Apellido:</strong> {user.lastname}</div>
                 <div className={styles.infoItem}><strong>Email:</strong> {user.email}</div>
                 <div className={styles.infoItem}><strong>Contraseña:</strong> ********</div>
-
+                <button onClick={handleShowAddresses} className={styles.addressesBtn}>
+                    Ver/Gestionar Direcciones
+                </button>
                 <button onClick={() => setIsEditing(true)} className={styles.editBtn}>
                     Editar perfil
                 </button>

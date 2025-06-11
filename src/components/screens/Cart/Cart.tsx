@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
 import styles from "./Cart.module.css";
 import { useCartStore } from "../../../store/useCartStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaTruck } from "react-icons/fa6";
-
+import { initMercadoPago } from "@mercadopago/sdk-react";
+import { getUserAddresses, type DireccionResponseFrontend } from "../../../services/ConectionApi";
+const MERCADOPAGO_PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
+if (MERCADOPAGO_PUBLIC_KEY) {
+  initMercadoPago(MERCADOPAGO_PUBLIC_KEY, {
+    locale: 'es-AR',
+  });
+} else {
+  console.error("MERCADOPAGO_PUBLIC_KEY no está definida. La integración de Mercado Pago no funcionará.");
+}
 interface CartItem {
   id: number;
   name: string;
@@ -12,15 +21,17 @@ interface CartItem {
   imageUrl: string; // Asegúrate de que esto siempre sea un string
   color: string;
   talle: string;
+  category:string
 }
 
 export const CartPage = () => {
-  const { items, increaseQuantity, decreaseQuantity } = useCartStore();
-
+  const { items, increaseQuantity, decreaseQuantity, clearCart } = useCartStore();
+  const navigate = useNavigate();
   const [postalCode, setPostalCode] = useState<string>("");
   const [shippingCost, setShippingCost] = useState<number>(4500); // Default shipping cost
   const [shippingError, setShippingError] = useState<string | null>(null);
-
+  const [isLoadingPayment, setIsLoadingPayment] = useState<boolean>(false); 
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const getSubtotal = (item: CartItem) => item.price * item.quantity;
   const subtotal = items.reduce((acc, item) => acc + getSubtotal(item), 0);
 
@@ -139,7 +150,39 @@ export const CartPage = () => {
       clearTimeout(handler);
     };
   }, [postalCode, items]);
+  const handleInitiatePayment = async () => {
+    if (items.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+    if (!postalCode || shippingError) {
+      alert("Por favor, ingresa un código postal válido antes de continuar.");
+      return;
+    }
 
+    setIsLoadingPayment(true);
+    setPaymentError(null);
+
+    try {
+      const response = await getUserAddresses();
+      const userAddresses: DireccionResponseFrontend[] = response.data; 
+
+      if (!userAddresses || userAddresses.length === 0) {
+        alert('Para continuar con el pago, necesitas tener al menos una dirección registrada. Serás redirigido a tu perfil para agregarla.');
+        navigate('/profile/ubicaciones'); 
+        return; 
+      }
+
+      alert('Tienes direcciones registradas. Ahora puedes seleccionar una dirección de envío para proceder al pago.');
+      navigate('/checkout/select-address'); 
+
+    } catch (error: any) {
+      console.error("Error al verificar direcciones o iniciar pago:", error);
+      setPaymentError(error.message || "No se pudo iniciar el proceso de pago. Intenta de nuevo.");
+    } finally {
+      setIsLoadingPayment(false);
+    }
+  };
   return (
     <div className={styles.cartPage}>
       {items.length > 0 ? (
@@ -200,7 +243,7 @@ export const CartPage = () => {
             </div>
             <div className={styles.buttons}>
               {/* Animated Pay Button */}
-              <div className={styles.animatedButtonContainer} onClick={() => alert("Iniciar pago")}>
+              <div className={styles.animatedButtonContainer} onClick={handleInitiatePayment}>
                 <div className={styles.leftSide}>
                   <div className={styles.card}>
                     <div className={styles.cardLine}></div>
