@@ -1,69 +1,95 @@
+/* Existing styles */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  
-  .modal {
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  input {
-    display: block;
-    width: 100%;
-    margin: 1rem 0;
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-  }
-  
-  button {
-    padding: 0.8rem 1rem;
-    background-color: #3E2723;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .closeBtn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #3E2723;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
 
-  }
-  .registro {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #555;
-    text-align: center;
-  }
-  
-  .link {
-    color: #6b4139;
-    cursor: pointer;
-    font-weight: bold;
-    text-decoration: underline;
-  }
-    
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  align-items: center;
+  justify-content: center;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 0.8rem 1rem;
+  background-color: #3E2723;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #3E2723;
+}
+
+.registro {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+
+.link {
+  color: #6b4139;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.passwordInputContainer {
+  position: relative;
+  width: 100%;
+  margin: 1rem 0;
+}
+.passwordInputContainer input {
+  padding-right: 2.5rem;
+  margin: 0;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #3E2723;
+  font-size: 1.1rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

@@ -1,85 +1,158 @@
-/* Contenedor principal */
+/* =============================
+   Contenedor principal
+============================= */
 .container {
-    text-align: center;
-    padding: 2rem;
-    width: 70%;
-    margin: 0 auto;
-    font-family: "Lato", sans-serif;
-  }
-  
-  .titulo {
-    font-size: 2rem;
-    font-style: italic;
-    margin-bottom: 0.5rem;
-    color: #3E2723;
-  }
-  
-  .subtitulo {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .formulario {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    display: flex;
-  }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    width: 100%;
-  }
-  
-  .grid div {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  label {
-    margin-bottom: 0.3rem;
-    font-weight: bold;
-    display: inline-block; 
-  }
-  
-  .labelGenero{
-    margin-bottom: 1.3rem;
-    font-weight: bold;
-    display: inline-block; 
-  }
-  
-  input, select {
-    font-family: inherit;
-    font-size: 1rem;
-    height: 46px;
-    padding: 0.6rem 1rem;
-    border-radius: 30px;
-    border: 2px solid #3E2723;
-    box-shadow: 2px 2px 3px #ccc;
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-  }
-  select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: white;
-    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='10'%20height='6'%20viewBox='0%200%2010%206'%3E%3Cpath%20fill='%233E2723'%20d='M0%200l5%206%205-6z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.2rem center;
-    background-size: 0.65rem auto;
-    line-height: 1; 
-    height: 46px; 
-    vertical-align: middle;
-    font-family: inherit;
-    display: flex;
-  }
+  width: 70%;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "Lato", sans-serif;
+  text-align: center;
+}
 
-/* Botón */
+/* =============================
+   Títulos
+============================= */
+.titulo {
+  font-size: 2rem;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  color: #3e2723;
+}
+
+.subtitulo {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+/* =============================
+   Formulario
+============================= */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.grid div {
+  display: flex;
+  flex-direction: column;
+}
+
+label,
+.labelGenero {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  display: inline-block;
+}
+
+.labelGenero {
+  margin-bottom: 1.3rem;
+}
+
+/* =============================
+   Inputs y Selects
+============================= */
+input,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  height: 46px;
+  padding: 0.6rem 1rem;
+  border-radius: 30px;
+  border: 2px solid #3e2723;
+  box-shadow: 2px 2px 3px #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+select {
+  appearance: none;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='10'%20height='6'%20viewBox='0%200%2010%206'%3E%3Cpath%20fill='%233E2723'%20d='M0%200l5%206%205-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem center;
+  background-size: 0.65rem auto;
+}
+
+/* =============================
+   Campo de Contraseña con toggle
+============================= */
+
+.passwordContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+.passwordContainer > * {
+  flex: 0 0 auto;
+}
+.passwordInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.inputWithIcon input {
+  width: 100%;
+  padding-right: 40px; /* deja espacio para el ícono */
+  height: 40px; /* o lo que uses normalmente */
+  box-sizing: border-box;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+
+.passwordInputContainerConfirm {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.passwordInputContainerConfirm input {
+  padding-right: 40px; /* espacio para el ícono */
+  height: 40px;
+}
+
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+
+/* =============================
+   Botón con estrellas animadas
+============================= */
 .boton {
   position: relative;
   margin-top: 2rem;
@@ -87,159 +160,160 @@
   background: #5a403c;
   font-size: 17px;
   font-weight: 500;
-  color: #181818;
+  color: white;
   border: 3px solid #5a403c;
   border-radius: 8px;
   box-shadow: 0 0 0 #5a403c;
   cursor: pointer;
-  overflow: visible;
   transition: all 0.3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: visible;
   user-select: none;
-  color: white;
 }
 
-/* Efectos de hover para el botón */
 .boton:hover {
-  background: #3E2723;
-  color: #5a403c;
-  box-shadow: 0 0 25px #fec1958c;
+  background: #3e2723;
   color: white;
+  box-shadow: 0 0 25px #fec1958c;
 }
 
-/* Estrellas animadas dentro del botón */
+/* =============================
+   Estrellas animadas
+============================= */
+.star-1,
+.star-2,
+.star-3,
+.star-4,
+.star-5,
+.star-6 {
+  position: absolute;
+  z-index: -5;
+  filter: drop-shadow(0 0 0 #eb4e00);
+  transition: all 0.8s ease;
+}
 
 .star-1 {
-  position: absolute;
   top: 20%;
   left: 20%;
   width: 25px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
 }
 
 .star-2 {
-  position: absolute;
   top: 45%;
   left: 45%;
   width: 15px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
 .star-3 {
-  position: absolute;
   top: 40%;
   left: 40%;
   width: 5px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
 .star-4 {
-  position: absolute;
   top: 20%;
   left: 40%;
   width: 8px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
 .star-5 {
-  position: absolute;
   top: 25%;
   left: 45%;
   width: 15px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
 .star-6 {
-  position: absolute;
   top: 5%;
   left: 50%;
   width: 5px;
-  height: auto;
-  filter: drop-shadow(0 0 0 #eb4e00);
-  z-index: -5;
   transition: all 0.8s ease;
 }
 
-button:hover {
-  background: transparent;
-  color: #fec195;
-  box-shadow: 0 0 25px #fec1958c;
-}
-
-button:hover .star-1 {
-  position: absolute;
+.boton:hover .star-1 {
   top: -80%;
   left: -30%;
-  width: 25px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4e00);
   z-index: 2;
 }
 
-button:hover .star-2 {
-  position: absolute;
+.boton:hover .star-2 {
   top: -25%;
   left: 10%;
-  width: 15px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4e00);
   z-index: 2;
 }
 
-button:hover .star-3 {
-  position: absolute;
+.boton:hover .star-3 {
   top: 55%;
   left: 25%;
-  width: 5px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4e00);
   z-index: 2;
 }
 
-button:hover .star-4 {
-  position: absolute;
+.boton:hover .star-4 {
   top: 30%;
   left: 80%;
-  width: 8px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4e00);
   z-index: 2;
 }
 
-button:hover .star-5 {
-  position: absolute;
+.boton:hover .star-5 {
   top: 25%;
   left: 115%;
-  width: 15px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4a00);
   z-index: 2;
 }
 
-button:hover .star-6 {
-  position: absolute;
+.boton:hover .star-6 {
   top: 5%;
   left: 60%;
-  width: 5px;
-  height: auto;
   filter: drop-shadow(0 0 10px #eb4e00);
   z-index: 2;
 }
-/* Color de relleno para SVG o elementos que usen la clase */
+
+/* =============================
+   Otros estilos
+============================= */
 .fil0 {
   fill: #fffdef;
+}
+
+.errorMessage {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  text-align: left;
+}
+
+.inputError {
+  border-color: #d32f2f;
+}
+
+/* =============================
+   Responsividad
+============================= */
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .passwordToggle {
+    font-size: 1.1rem;
+    right: 0.6rem;
+  }
 }

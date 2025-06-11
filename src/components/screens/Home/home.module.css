@@ -1,177 +1,234 @@
+/* Existing styles as provided */
+
 .homeMainContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f9fafb;
-  font-family: "Lato", sans-serif;
-  height: auto;
-  width: 100%;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9fafb;
+    font-family: "Lato", sans-serif;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .homeImagePrincipal {
-  width: 100%;
-  height: auto;
+    width: 100%;
+    height: auto;
 }
 
 .homeImagePrincipal img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  max-height: 500px;
-  border-bottom: 4px solid #140c0a;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 500px;
+    border-bottom: 4px solid #140c0a;
 }
 
 .homeDiscountContainer {
-  margin: 1rem 0;
-  background-color: #3E2723;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 1rem;
-  text-align: center;
-  font-size: 1.25rem;
-  font-weight: 600;
-  width: 15rem;
-  height: 5rem;
-  align-items: center;
-  justify-content: center;
-  display: flex;
+    margin: 1rem 0;
+    background-color: #3E2723;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    width: 15rem;
+    height: 5rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 .homeMainImageContainer {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 2rem 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
 }
 
 .homeImageContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  width: 95%;
-  max-width: 1200px;
-  box-sizing: border-box;
-  overflow-x: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    width: 95%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .homeImageContainer img {
-  max-width: 380px; /* o el valor que prefieras */
-  flex: 1 1 calc(33.333% - 1rem);
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  border-radius: 1rem;
-  box-shadow: 0 4px 10px #140c0a;
-  transition: transform 0.3s ease;
+    max-width: 380px;
+    flex: 1 1 calc(33.333% - 1rem);
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px #140c0a;
+    transition: transform 0.3s ease;
 }
 
 .homeImageContainer img:hover {
-  transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 @media (max-width: 900px) {
-  .homeImageContainer img {
-    width: calc(50% - 1rem);
-  }
+    .homeImageContainer img {
+        width: calc(50% - 1rem);
+    }
 }
 
 @media (max-width: 600px) {
-  .homeImageContainer img {
-    width: 100%;
-  }
+    .homeImageContainer img {
+        width: 100%;
+    }
 }
 
-
 .homeAboutUsContainer {
-  background-color: #e5e7eb;
-  padding: 3rem 2rem;
-  text-align: center;
-  border-radius: 1rem;
-  margin: 2rem;
+    background-color: #e5e7eb;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 1rem;
+    margin: 2rem;
 }
 
 .homeAboutUsContainer h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #111827;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #111827;
 }
 
 .homeAboutUsContainer h4 {
-  font-size: 1.1rem;
-  color: #EFEBE9;
-  max-width: 700px;
-  margin: 0 auto;
-  line-height: 1.6;
+    font-size: 1.1rem;
+    color: #EFEBE9;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
 }
 
 .loading {
-  font-size: 1.5rem;
-  text-align: center;
-  color: #333;
-  padding: 2rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #333;
+    padding: 2rem;
 }
 
 .error {
-  font-size: 1.5rem;
-  text-align: center;
-  color: red;
-  padding: 2rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: red;
+    padding: 2rem;
 }
 
 .categoryCardsContainer {
     display: flex;
-    justify-content: space-around; 
+    justify-content: space-around;
     margin-bottom: 1rem;
     flex-wrap: wrap;
     flex-direction: row;
-    width: 100%; 
+    width: 100%;
     box-sizing: border-box;
-    padding: 0 0.5rem; 
+    padding: 0 0.5rem;
 }
 
 .categoryCard {
     position: relative;
     cursor: pointer;
-    width: calc(33.333% - 1rem); 
+    width: calc(33.333% - 1rem);
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
-
 .categoryCard:hover {
-  transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 .categoryCard img {
-  width: auto;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    width: auto; /* Mantenemos el auto para las CategoryCard normales */
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .categoryButton {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 14px;
-  border-radius: 10px;
-  cursor: pointer;
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .carouselTitle {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-self: flex-start;
-  margin-left: 1rem;
-  width: 95%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-self: flex-start;
+    margin-left: 20px; /* Adjusted margin for better spacing with carousel */
+    width: calc(100% - 40px); /* Adjust width based on new margin */
+    font-size: 1.8rem;
+    color: #3E2723;
+    margin-top: 2rem; /* Add some space above the title */
+    margin-bottom: 1rem; /* Space below the title */
+}
+
+/* --- Nuevos estilos ESPECÍFICOS para las SportCategory dentro del carrusel --- */
+.sportCategoryCarouselCard {
+    /* Define un tamaño fijo para cada tarjeta de deporte en el carrusel */
+    min-width: 400px; /* Ancho mínimo para cada tarjeta */
+    max-width: 425px; /* Ancho máximo */
+    height: 525px; /* Altura fija para la tarjeta */
+    flex-shrink: 0; /* Evita que las tarjetas se achiquen */
+    margin: 0 10px; /* Espacio entre las tarjetas en el carrusel */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff; /* Fondo para la tarjeta */
+    overflow: hidden; /* Asegura que el contenido no se desborde */
+}
+
+/* Ajustes específicos para la imagen dentro de estas tarjetas */
+.sportCategoryCarouselCard img {
+    width: 100%; /* La imagen llenará el ancho de la tarjeta */
+    height: 100%; /* La imagen llenará la altura de la tarjeta */
+    border-radius: 0; /* No necesitas border-radius aquí si el padre ya lo tiene */
+}
+
+/* Aseguramos que el botón se vea bien en estas tarjetas */
+.sportCategoryCarouselCard .categoryButton {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semitransparente */
+    color: #000;
+    font-weight: 600;
+}
+
+/* --- Responsive adjustments for sportCategoryCarouselCard --- */
+@media (max-width: 768px) {
+    .sportCategoryCarouselCard {
+        min-width: 160px;
+        max-width: 180px;
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sportCategoryCarouselCard {
+        min-width: 130px;
+        max-width: 150px;
+        height: 130px;
+    }
+    .sportCategoryCarouselCard .categoryButton {
+        font-size: 12px;
+        padding: 0.4rem 0.8rem;
+    }
 }

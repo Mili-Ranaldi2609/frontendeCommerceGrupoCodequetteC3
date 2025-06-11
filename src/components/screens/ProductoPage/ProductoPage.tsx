@@ -1,3 +1,5 @@
+// ProductoPage.tsx (o donde tengas tu componente ProductoDetalle)
+
 import type { FC } from "react";
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -6,12 +8,12 @@ import { useProductoStore } from "../../../store/useProductoStore";
 import { useCartStore } from "../../../store/useCartStore";
 import { Carousel } from "../../ui/Carousel/Carousel";
 import { ProductoCard } from "../../ui/ProductCard/ProductCard";
-import type { IEnumTalle } from "../../../types/IEnumTalle";
-import type { Producto,} from '../../../types/IProduct';
+import { IEnumTalle, TALLAS_ROPA, TALLAS_CALZADO, ALL_TALLAS } from "../../../types/IEnumTalle"; // Importa los nuevos arrays
+import type { Producto } from '../../../types/IProduct';
 import type { ICategoria } from '../../../types/ICategoria';
 import { useAuth } from '../../../hooks/useAuth';
 import { ModalEditarProducto } from '../../ui/Modals/ModalsAdmin/EditProductModal';
-import { updateProducto as updateProductoService, getCategorias, getAllProductos } from '../../../services/ConectionApi'; // Import the service function
+import { updateProducto as updateProductoService, getCategorias, getAllProductos } from '../../../services/ConectionApi';
 
 export const ProductoDetalle: FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -26,8 +28,8 @@ export const ProductoDetalle: FC = () => {
         fetchProductoPorId,
         loading,
         error,
-        productos: allProducts, // Still useful for related products
-        fetchProductos, // Still useful for related products
+        productos: allProducts,
+        fetchProductos,
     } = useProductoStore();
 
     const [imagenSeleccionada, setImagenSeleccionada] = useState<string | null>(null);
@@ -43,13 +45,11 @@ export const ProductoDetalle: FC = () => {
 
     const productDetailRef = useRef<HTMLDivElement>(null);
     const relatedProductsRef = useRef<HTMLDivElement>(null);
-    const [productoEditar, setProductoEditar] = useState<Producto | null>(null); // State to control modal
+    const [productoEditar, setProductoEditar] = useState<Producto | null>(null);
 
-    // --- NEW: State for categories if we need them for the edit modal directly from service ---
     const [categorias, setCategorias] = useState<ICategoria[]>([]);
 
     useEffect(() => {
-        // Fetch categories when the component mounts, similar to AdminPage
         const loadCategories = async () => {
             try {
                 const res = await getCategorias();
@@ -61,11 +61,9 @@ export const ProductoDetalle: FC = () => {
         loadCategories();
     }, []);
 
-
     useEffect(() => {
         if (id) {
             fetchProductoPorId(Number(id));
-            // Reiniciar estados al cargar un nuevo producto o al cambiar el ID de la URL
             setImagenSeleccionada(null);
             setColorSeleccionado(null);
             setTalleSeleccionado(null);
@@ -74,7 +72,6 @@ export const ProductoDetalle: FC = () => {
     }, [id, fetchProductoPorId]);
 
     useEffect(() => {
-        // Fetch all products if not already loaded, needed for related products
         if (allProducts.length === 0 && !loading) {
             fetchProductos();
         }
@@ -82,7 +79,6 @@ export const ProductoDetalle: FC = () => {
 
     useEffect(() => {
         if (producto) {
-            // Cuando el producto carga o cambia, establece el primer detalle como seleccionado
             const primerDetalle = producto.detalle?.[0];
             if (primerDetalle) {
                 setImagenSeleccionada(primerDetalle.imagenes?.[0] || null);
@@ -108,25 +104,51 @@ export const ProductoDetalle: FC = () => {
         return Array.from(uniqueColors.entries()).map(([color, imagen]) => ({ color, imagen }));
     }, [producto]);
 
-    const tallesDisponibles = useMemo(() => {
-        if (!producto?.detalle || !colorSeleccionado) return [];
-        return Array.from(
-            new Set(producto.detalle.filter((d) => d.color === colorSeleccionado).map((d) => d.talle))
+    // --- NUEVA LÓGICA PARA FILTRAR TALLES Y MOSTRAR HABILITADOS ---
+    const allTallesParaProducto = useMemo(() => {
+        if (!producto) return [];
+
+        // Determinar si es calzado o ropa basado en las categorías del producto
+        const isCalzado = producto.categorias.some(cat => cat.descripcion.toLowerCase().includes('calzado'));
+        const isRopa = producto.categorias.some(cat => cat.descripcion.toLowerCase().includes('ropa'));
+
+        if (isCalzado) {
+            return TALLAS_CALZADO;
+        } else if (isRopa) {
+            return TALLAS_ROPA;
+        } else {
+            // Si no se puede determinar (o es un producto mixto), mostrar todos los talles.
+            // Considera si esta es la lógica deseada para casos ambiguos.
+            // Podrías también lanzar un error o mostrar un mensaje al usuario.
+            return ALL_TALLAS;
+        }
+    }, [producto]);
+
+    const tallesHabilitadosParaColor = useMemo(() => {
+        if (!producto?.detalle || !colorSeleccionado) return new Set<IEnumTalle>();
+        return new Set(
+            producto.detalle
+                .filter((d) => d.color === colorSeleccionado && d.stock > 0) // Solo talles con stock > 0
+                .map((d) => d.talle)
         );
     }, [producto, colorSeleccionado]);
 
     useEffect(() => {
         if (colorSeleccionado) {
-            const tallesParaColorActual = producto?.detalle
-                .filter(d => d.color === colorSeleccionado)
-                .map(d => d.talle) || [];
-
-            if (!talleSeleccionado || !tallesParaColorActual.includes(talleSeleccionado)) {
-                setTalleSeleccionado((tallesParaColorActual[0] || null) as IEnumTalle | null);
+            // Ajustar el talle seleccionado si el color actual no tiene el talle previo o si el stock es 0
+            if (talleSeleccionado && (!tallesHabilitadosParaColor.has(talleSeleccionado) || detalleSeleccionado?.stock === 0)) {
+                // Si el talle previamente seleccionado no está habilitado para el nuevo color,
+                // intenta seleccionar el primer talle habilitado para este color.
+                const primerTalleHabilitado = allTallesParaProducto.find(talle => tallesHabilitadosParaColor.has(talle));
+                setTalleSeleccionado(primerTalleHabilitado || null);
+            } else if (!talleSeleccionado && allTallesParaProducto.length > 0) {
+                 // Si no hay talle seleccionado, selecciona el primero habilitado
+                const primerTalleHabilitado = allTallesParaProducto.find(talle => tallesHabilitadosParaColor.has(talle));
+                setTalleSeleccionado(primerTalleHabilitado || null);
             }
         }
         setShowDuplicateMessage(false);
-    }, [colorSeleccionado, producto, talleSeleccionado]);
+    }, [colorSeleccionado, producto, talleSeleccionado, allTallesParaProducto, tallesHabilitadosParaColor]);
 
     const detalleSeleccionado = useMemo(() => {
         if (!producto || !colorSeleccionado || !talleSeleccionado) return null;
@@ -199,8 +221,8 @@ export const ProductoDetalle: FC = () => {
     }, []);
 
     const handleAddToCart = () => {
-        if (!producto || !detalleSeleccionado) {
-            alert("Debes seleccionar un color y un talle válidos.");
+        if (!producto || !detalleSeleccionado || detalleSeleccionado.stock === 0) {
+            alert("Debes seleccionar un color y un talle válidos con stock disponible.");
             return;
         }
 
@@ -244,27 +266,24 @@ export const ProductoDetalle: FC = () => {
         setProductoEditar(null);
     }, []);
 
-    // This function will be called by ModalEditarProducto.
-    // It directly calls the `updateProductoService` from your services.
     const updateProduct = useCallback(async (
         productoId: number,
-        productoActualizado: Omit<Producto, "id" | "precioOriginal" | "precioFinal"> // Matches expected type
+        productoActualizado: Omit<Producto, "id" | "precioOriginal" | "precioFinal">
     ) => {
         try {
-            await updateProductoService(productoId, productoActualizado); // Call the service function
-            // After successful update, re-fetch the product details to update the UI
+            await updateProductoService(productoId, productoActualizado);
             if (id) {
-                fetchProductoPorId(Number(id)); // Re-fetch current product
-                fetchProductos(); // Re-fetch all products if needed for related products
+                fetchProductoPorId(Number(id));
+                fetchProductos();
             }
-            setProductoEditar(null); // Close the modal
+            setProductoEditar(null);
             console.log("Producto actualizado con éxito!");
         } catch (updateError) {
             console.error('Error al actualizar el producto:', updateError);
             alert('Error al actualizar el producto.');
-            throw updateError; // Re-throw to allow error handling in the modal if desired
+            throw updateError;
         }
-    }, [id, fetchProductoPorId, fetchProductos]); // Dependencies for useCallback
+    }, [id, fetchProductoPorId, fetchProductos]);
 
     if (loading) return <p className={styles.loadingMessage}>Cargando detalles del producto...</p>;
     if (error)
@@ -358,19 +377,28 @@ export const ProductoDetalle: FC = () => {
                             Talle:{" "}
                         </label>
                         <div className={styles.opcionesContainer}>
-                            {tallesDisponibles.map((talle) => (
-                                <button
-                                    key={talle}
-                                    type="button"
-                                    className={`${styles.opcionBtn} ${
-                                        talleSeleccionado === talle ? styles.activa : ""
-                                    }`}
-                                    onClick={() => setTalleSeleccionado(talle as IEnumTalle)}
-                                    aria-pressed={talleSeleccionado === talle}
-                                >
-                                    {talle}
-                                </button>
-                            ))}
+                            {/* Renderiza todos los talles relevantes (ropa o calzado) */}
+                            {allTallesParaProducto.map((talle) => {
+                                const isTalleAvailable = tallesHabilitadosParaColor.has(talle);
+                                const isSelected = talleSeleccionado === talle;
+
+                                return (
+                                    <button
+                                        key={talle}
+                                        type="button"
+                                        className={`${styles.opcionBtn} ${
+                                            isSelected ? styles.activa : ""
+                                        } ${!isTalleAvailable ? styles.deshabilitada : ""}`}
+                                        onClick={() => setTalleSeleccionado(talle)}
+                                        disabled={!isTalleAvailable} // Deshabilita el botón si no está disponible
+                                        aria-pressed={isSelected}
+                                        aria-disabled={!isTalleAvailable}
+                                    >
+                                        {/* Remueve el "TALLE_" prefix si existe para mostrar solo el número/letra */}
+                                        {talle.replace('TALLE_', '')}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
